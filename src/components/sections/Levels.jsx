@@ -199,21 +199,6 @@ function HConnector({ color }) {
   )
 }
 
-function VConnector({ color }) {
-  return (
-    <div style={{ display: 'flex', justifyContent: 'center' }}>
-      <svg viewBox="0 0 20 50" width={20} height={50} aria-hidden="true">
-        {[0,1,2,3].map(i => (
-          <circle key={i} cx={10} cy={5 + i * 11} r="3" fill={color}
-            opacity={i % 2 === 0 ? 0.9 : 0.55} />
-        ))}
-        <path d="M5 44 L10 50 L15 44" fill="none" stroke={color}
-          strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    </div>
-  )
-}
-
 /* ══════════════════════════════════════════════════════════════════
    LEVEL CARD
 ══════════════════════════════════════════════════════════════════ */
@@ -236,8 +221,8 @@ function LevelCard({ level, index, inView }) {
         boxShadow: '5px 5px 0 #1A1A1A',
         borderRadius: '18px',
         overflow: 'hidden',
-        flex: 1,
-        minWidth: 0,
+        flex: '1 1 0',
+        minWidth: 'min(100%, 260px)',
         cursor: 'default',
         display: 'flex',
         flexDirection: 'column',
@@ -537,23 +522,12 @@ export default function Levels() {
         {/* Progress map */}
         <ProgressMap inView={inView} />
 
-        {/* ── Desktop: 3 columns + connectors ── */}
-        <div style={{ display: 'flex', alignItems: 'flex-start' }}
-          className="hidden lg:flex">
+        {/* 3 niveles en fila (único layout; evita duplicar por style inline vs Tailwind) */}
+        <div className="flex items-start w-full min-w-0 overflow-x-auto pb-2 -mx-2 px-2 sm:overflow-visible sm:pb-0 sm:mx-0 sm:px-0">
           <LevelCard level={LEVELS[0]} index={0} inView={inView} />
           <HConnector color={LEVELS[0].color} />
           <LevelCard level={LEVELS[1]} index={1} inView={inView} />
           <HConnector color={LEVELS[1].color} />
-          <LevelCard level={LEVELS[2]} index={2} inView={inView} />
-        </div>
-
-        {/* ── Mobile / tablet: stacked ── */}
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '0' }}
-          className="flex lg:hidden">
-          <LevelCard level={LEVELS[0]} index={0} inView={inView} />
-          <VConnector color={LEVELS[0].color} />
-          <LevelCard level={LEVELS[1]} index={1} inView={inView} />
-          <VConnector color={LEVELS[1].color} />
           <LevelCard level={LEVELS[2]} index={2} inView={inView} />
         </div>
 

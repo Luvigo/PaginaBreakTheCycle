@@ -55,7 +55,7 @@ const TECH_STACK = [
   { label: 'VR / XR',    icon: '🥽', color: '#1E88E5', bg: '#EFF6FF' },
   { label: 'JSON',        icon: '📦', color: '#FF8C00', bg: '#FFF8F0' },
   { label: 'Git',         icon: '🌿', color: '#3DA35D', bg: '#F2FFF5' },
-  { label: 'Trello',      icon: '📋', color: '#0079BF', bg: '#EBF5FF' },
+  { label: 'Planner Teams', icon: '📋', color: '#464EB8', bg: '#EBF5FF' },
   { label: 'URP',         icon: '✨', color: '#FF5757', bg: '#FFF5F5' },
   { label: 'OOP',         icon: '🧱', color: '#00ACC1', bg: '#F0FEFF' },
   { label: 'Data Struct', icon: '🗃️', color: '#8E24AA', bg: '#FDF4FF' },
