@@ -12,10 +12,8 @@ const NAV_LINKS = [
 ]
 
 const SOCIALS = [
-  { icon: '💻', label: 'GitHub',    href: '#',                                                                        color: '#C9A8E0' },
-  { icon: '🎮', label: 'Itch.io',   href: 'https://odvelez.itch.io/break-the-cycle',                                  color: '#FF5757' },
-  { icon: '📁', label: 'Drive',     href: 'https://drive.google.com/drive/folders/1zdccAdilvZ9PDUmkYI25daNMa3I4qrYD', color: '#FFE566' },
-  { icon: '✉️', label: 'Contacto',  href: 'mailto:underrisestudio@example.com',                                       color: '#A8D8A8' },
+  { icon: '🎮', label: 'Itch.io', href: 'https://odvelez.itch.io/break-the-cycle',                                  color: '#FF5757' },
+  { icon: '📁', label: 'Drive',   href: 'https://drive.google.com/drive/folders/1zdccAdilvZ9PDUmkYI25daNMa3I4qrYD', color: '#FFE566' },
 ]
 
 /* ── Colorful title letters (ending screen style) ── */

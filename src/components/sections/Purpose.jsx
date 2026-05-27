@@ -525,7 +525,7 @@ function PurposeStats({ inView }) {
     { icon: '🏫', label: 'Proyecto universitario', sub: 'Universidad del Norte', tone: '#C9A8E0', tilt: -1.6, sticker: '✦' },
     { icon: '🎯', label: '3 niveles simbólicos',   sub: 'Huida · Parkour · VR', tone: '#FFE566', tilt: 1.2, sticker: '▶' },
     { icon: '💙', label: 'Genera conciencia',       sub: 'Bullying & empatía', tone: '#A8D4F5', tilt: -1.1, sticker: '♥' },
-    { icon: '🆓', label: 'Gratis para todos',        sub: 'PC · MacOS · Web', tone: '#A8D8A8', tilt: 1.4, sticker: '★' },
+    { icon: '🆓', label: 'Gratis para todos',        sub: 'PC · Web', tone: '#A8D8A8', tilt: 1.4, sticker: '★' },
   ]
 
   return (
