@@ -5,7 +5,7 @@ const NAV_LINKS = [
   { label: 'Inicio',      href: '#hero'     },
   { label: 'El Juego',    href: '#about'    },
   { label: 'Niveles',     href: '#levels'   },
-  { label: 'Galería',     href: '#gallery'  },
+  { label: 'Trailer',     href: '#trailer'  },
   { label: 'Equipo',      href: '#team'     },
   { label: 'Código',      href: '#code'     },
   { label: 'Descargar',   href: '#download' },
@@ -13,7 +13,7 @@ const NAV_LINKS = [
 
 const SOCIALS = [
   { icon: '💻', label: 'GitHub',    href: '#',                                                                        color: '#C9A8E0' },
-  { icon: '🎮', label: 'Itch.io',   href: '#',                                                                        color: '#FF5757' },
+  { icon: '🎮', label: 'Itch.io',   href: 'https://odvelez.itch.io/break-the-cycle',                                  color: '#FF5757' },
   { icon: '📁', label: 'Drive',     href: 'https://drive.google.com/drive/folders/1zdccAdilvZ9PDUmkYI25daNMa3I4qrYD', color: '#FFE566' },
   { icon: '✉️', label: 'Contacto',  href: 'mailto:underrisestudio@example.com',                                       color: '#A8D8A8' },
 ]
@@ -307,7 +307,7 @@ export default function Footer() {
               marginTop: '6px',
               textAlign: 'center',
             }}>
-              UNDERRISE STUDIO · UNIVERSIDAD DEL NORTE · 2025
+              UNDERRISE STUDIO · UNIVERSIDAD DEL NORTE · 2026
             </p>
           </div>
 
@@ -377,7 +377,7 @@ export default function Footer() {
               <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
                 {[
                   { icon: '🏫', text: 'Universidad del Norte' },
-                  { icon: '📅', text: 'Proyecto 2025' },
+                  { icon: '📅', text: 'Proyecto 2026' },
                   { icon: '🎓', text: 'Ingeniería de Sistemas' },
                   { icon: '🌎', text: 'Barranquilla, Colombia' },
                   { icon: '🧩', text: 'Unity 6 · C# · VR' },
@@ -472,7 +472,7 @@ export default function Footer() {
               color: 'rgba(255,255,255,0.28)',
               margin: 0,
             }}>
-              © 2025 UnderRise Studio. Proyecto universitario sin fines de lucro.
+              © 2026 UnderRise Studio. Proyecto universitario sin fines de lucro.
             </p>
 
             {/* Mini pixel badge */}

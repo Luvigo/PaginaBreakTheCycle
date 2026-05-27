@@ -475,3 +475,9 @@ a, button { transition: color 0.15s, background 0.15s, opacity 0.15s; }
 
 /* ─── LOGO PNG PLACEHOLDER — reemplaza <ColorfulTitle> cuando tengas el PNG ─── */
 /* img.logo-image { width: 320px; max-width: 90vw; } */
+
+/* Visor de documentos: ocultar navbar y menú móvil detrás del modal */
+body.doc-viewer-open [data-site-header] {
+  visibility: hidden;
+  pointer-events: none;
+}

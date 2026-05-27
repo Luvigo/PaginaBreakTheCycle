@@ -1,5 +1,10 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useEffect } from 'react'
 import { motion, useInView, AnimatePresence } from 'framer-motion'
+import ZoomableDiagram from '@/components/shared/ZoomableDiagram'
+
+import imgPrincipalUml from '@/assets/diagrams/principal-uml.png'
+import imgUmlAuth from '@/assets/diagrams/uml-auth.png'
+import imgUmlMainMenu from '@/assets/diagrams/uml-main-menu.png'
 
 /* ══════════════════════════════════════════════════════════════════
    ANIMATION HELPERS
@@ -28,6 +33,7 @@ const UML_SYSTEMS = [
     bg:    '#EFF6FF',
     icon:  '🎮',
     tag:   'CLASS DIAGRAM',
+    image: imgPrincipalUml,
   },
   {
     id:    'auth',
@@ -37,6 +43,7 @@ const UML_SYSTEMS = [
     bg:    '#F8F4FF',
     icon:  '🔐',
     tag:   'SEQUENCE DIAGRAM',
+    image: imgUmlAuth,
   },
   {
     id:    'ui',
@@ -46,19 +53,8 @@ const UML_SYSTEMS = [
     bg:    '#F2FFF5',
     icon:  '🖥️',
     tag:   'COMPONENT DIAGRAM',
+    image: imgUmlMainMenu,
   },
-]
-
-const TECH_STACK = [
-  { label: 'Unity 6',     icon: '🎮', color: '#1A1A1A', bg: '#F5EEC8' },
-  { label: 'C#',          icon: '💻', color: '#A678CC', bg: '#F8F4FF' },
-  { label: 'VR / XR',    icon: '🥽', color: '#1E88E5', bg: '#EFF6FF' },
-  { label: 'JSON',        icon: '📦', color: '#FF8C00', bg: '#FFF8F0' },
-  { label: 'Git',         icon: '🌿', color: '#3DA35D', bg: '#F2FFF5' },
-  { label: 'Planner Teams', icon: '📋', color: '#464EB8', bg: '#EBF5FF' },
-  { label: 'URP',         icon: '✨', color: '#FF5757', bg: '#FFF5F5' },
-  { label: 'OOP',         icon: '🧱', color: '#00ACC1', bg: '#F0FEFF' },
-  { label: 'Data Struct', icon: '🗃️', color: '#8E24AA', bg: '#FDF4FF' },
 ]
 
 const FEATURES = [
@@ -90,66 +86,24 @@ function PixelStar({ color = '#FFE566', size = 14, style = {} }) {
   )
 }
 
-/* ══════════════════════════════════════════════════════════════════
-   UML BLUEPRINT PLACEHOLDER SVG
-══════════════════════════════════════════════════════════════════ */
-function BlueprintPlaceholder({ color, icon }) {
-  const c   = color
-  const dim = 'rgba(0,0,0,0.06)'
-
+function UMLDiagramPreview({ src, alt, zoomed = false }) {
   return (
-    <svg viewBox="0 0 360 200" width="100%" height="100%"
-      style={{ display: 'block' }} aria-hidden="true">
-      {/* Background */}
-      <rect width="360" height="200" fill="#F8FBFF" />
-
-      {/* Blueprint grid */}
-      {Array.from({ length: 11 }, (_, i) => (
-        <line key={`v${i}`} x1={i * 36} y1="0" x2={i * 36} y2="200"
-          stroke={c} strokeWidth="0.5" opacity="0.18" />
-      ))}
-      {Array.from({ length: 7 }, (_, i) => (
-        <line key={`h${i}`} x1="0" y1={i * 33} x2="360" y2={i * 33}
-          stroke={c} strokeWidth="0.5" opacity="0.18" />
-      ))}
-
-      {/* UML class boxes */}
-      <rect x="20"  y="20"  width="100" height="60"  fill="white" stroke={c} strokeWidth="1.5" rx="2" opacity="0.9" />
-      <rect x="20"  y="20"  width="100" height="16"  fill={c}     rx="2"  opacity="0.8" />
-      <line x1="20" y1="50" x2="120" y2="50" stroke={c} strokeWidth="0.8" opacity="0.5" />
-      {[0,1,2].map(i => <rect key={i} x="26" y={54 + i*6} width={50 + i*8} height="3" fill={dim} rx="1" />)}
-
-      <rect x="240" y="18"  width="110" height="65"  fill="white" stroke={c} strokeWidth="1.5" rx="2" opacity="0.9" />
-      <rect x="240" y="18"  width="110" height="16"  fill={c}     rx="2"  opacity="0.8" />
-      <line x1="240" y1="48" x2="350" y2="48" stroke={c} strokeWidth="0.8" opacity="0.5" />
-      {[0,1,2,3].map(i => <rect key={i} x="246" y={52 + i*6} width={55 + i*5} height="3" fill={dim} rx="1" />)}
-
-      <rect x="130" y="110" width="100" height="60"  fill="white" stroke={c} strokeWidth="1.5" rx="2" opacity="0.9" />
-      <rect x="130" y="110" width="100" height="16"  fill={c}     rx="2"  opacity="0.8" />
-      <line x1="130" y1="140" x2="230" y2="140" stroke={c} strokeWidth="0.8" opacity="0.5" />
-      {[0,1].map(i => <rect key={i} x="136" y={144 + i*7} width={60 + i*12} height="3" fill={dim} rx="1" />)}
-
-      {/* Connectors */}
-      <line x1="120" y1="50" x2="180" y2="118" stroke={c} strokeWidth="1.5" strokeDasharray="4,3" opacity="0.45" />
-      <line x1="240" y1="52" x2="230" y2="118" stroke={c} strokeWidth="1.5" strokeDasharray="4,3" opacity="0.45" />
-      <polygon points="178,112 183,122 173,122" fill={c} opacity="0.4" />
-      <polygon points="229,112 234,122 224,122" fill={c} opacity="0.4" />
-
-      {/* Small attribute hint boxes */}
-      <rect x="20"  y="110" width="80"  height="40" fill="white" stroke={c} strokeWidth="1"   rx="2" opacity="0.6" />
-      <rect x="20"  y="110" width="80"  height="12" fill={c}     rx="2"  opacity="0.5" />
-      <rect x="270" y="110" width="80"  height="40" fill="white" stroke={c} strokeWidth="1"   rx="2" opacity="0.6" />
-      <rect x="270" y="110" width="80"  height="12" fill={c}     rx="2"  opacity="0.5" />
-
-      {/* Center icon label */}
-      <text x="180" y="30" fontSize="20" textAnchor="middle" fontFamily="sans-serif">{icon}</text>
-
-      {/* Watermark label */}
-      <text x="180" y="190" fontSize="9" textAnchor="middle" fontFamily="monospace"
-        fill={c} opacity="0.35" letterSpacing="2">
-        UML PLACEHOLDER — REEMPLAZAR CON DIAGRAMA REAL
-      </text>
-    </svg>
+    <img
+      src={src}
+      alt={alt}
+      loading="lazy"
+      decoding="async"
+      draggable={false}
+      style={{
+        width: '100%',
+        height: '100%',
+        objectFit: 'cover',
+        objectPosition: 'center',
+        display: 'block',
+        transform: zoomed ? 'scale(1.03)' : 'scale(1)',
+        transition: 'transform 0.35s ease-out',
+      }}
+    />
   )
 }
 
@@ -175,51 +129,57 @@ function UMLCard({ sys, delay, inView, onExpand }) {
         boxShadow: hov ? '7px 7px 0 #1A1A1A' : '5px 5px 0 #1A1A1A',
         borderRadius: '16px',
         overflow: 'hidden',
-        cursor: 'pointer',
         transition: 'box-shadow 0.2s, transform 0.2s',
         transform: hov ? 'translate(-2px,-2px)' : 'translate(0,0)',
       }}
-      onClick={() => onExpand(sys)}
     >
-      {/* Image area */}
+      {/* Vista previa — sin zoom (solo en modal) */}
       <div style={{
         position: 'relative',
         borderBottom: '3px solid #1A1A1A',
         overflow: 'hidden',
-        aspectRatio: '16 / 9',
-        background: '#F0F6FF',
+        aspectRatio: '4 / 3',
+        background: '#0d0d12',
       }}>
-        <motion.div
-          animate={{ scale: hov ? 1.03 : 1 }}
-          transition={{ duration: 0.35, ease: 'easeOut' }}
-          style={{ width: '100%', height: '100%' }}
-        >
-          <BlueprintPlaceholder color={sys.color} icon={sys.icon} />
-        </motion.div>
+        <UMLDiagramPreview
+          src={sys.image}
+          alt={`Diagrama UML — ${sys.title}`}
+          zoomed={hov}
+        />
 
-        {/* Hover overlay with zoom hint */}
+        {/* Ver diagrama */}
         <motion.div
           animate={{ opacity: hov ? 1 : 0 }}
           transition={{ duration: 0.2 }}
           style={{
-            position: 'absolute', inset: 0,
-            background: `${sys.color}22`,
-            display: 'flex', alignItems: 'center', justifyContent: 'center',
+            position: 'absolute',
+            inset: 0,
+            zIndex: 4,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            background: `${sys.color}28`,
+            pointerEvents: hov ? 'auto' : 'none',
           }}
         >
-          <div style={{
-            background: sys.color,
-            border: '2px solid #fff',
-            borderRadius: '10px',
-            padding: '8px 18px',
-            fontFamily: '"Fredoka", sans-serif',
-            fontWeight: 600,
-            fontSize: '0.9rem',
-            color: '#fff',
-            boxShadow: '0 4px 16px rgba(0,0,0,0.15)',
-          }}>
+          <button
+            type="button"
+            onClick={(e) => { e.stopPropagation(); onExpand(sys) }}
+            style={{
+              background: sys.color,
+              border: '2px solid #fff',
+              borderRadius: '10px',
+              padding: '10px 20px',
+              fontFamily: '"Fredoka", sans-serif',
+              fontWeight: 600,
+              fontSize: '0.95rem',
+              color: '#fff',
+              boxShadow: '0 4px 16px rgba(0,0,0,0.2), 3px 3px 0 #1A1A1A',
+              cursor: 'pointer',
+            }}
+          >
             🔍 Ver diagrama
-          </div>
+          </button>
         </motion.div>
 
         {/* Tag badge */}
@@ -288,6 +248,12 @@ function UMLCard({ sys, delay, inView, onExpand }) {
    MODAL  (UML expand)
 ══════════════════════════════════════════════════════════════════ */
 function UMLModal({ sys, onClose }) {
+  useEffect(() => {
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    return () => { document.body.style.overflow = prev }
+  }, [])
+
   if (!sys) return null
   return (
     <AnimatePresence>
@@ -306,9 +272,9 @@ function UMLModal({ sys, onClose }) {
         }}
       >
         <motion.div
-          initial={{ scale: 0.85, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          exit={{ scale: 0.85, opacity: 0 }}
+          initial={{ opacity: 0, y: 28 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: 28 }}
           transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
           onClick={(e) => e.stopPropagation()}
           style={{
@@ -354,71 +320,37 @@ function UMLModal({ sys, onClose }) {
               ✕ Cerrar
             </button>
           </div>
-          {/* Diagram */}
-          <div style={{ padding: '4px' }}>
-            <BlueprintPlaceholder color={sys.color} icon={sys.icon} />
+          {/* Diagram — zoom solo aquí */}
+          <div
+            style={{
+              background: '#0d0d12',
+              overflow: 'hidden',
+              height: 'min(68vh, 560px)',
+            }}
+          >
+            <ZoomableDiagram
+              key={sys.id}
+              src={sys.image}
+              alt={`Diagrama UML — ${sys.title}`}
+              height="100%"
+              objectFit="cover"
+              showHint
+            />
           </div>
-          {/* Footer note */}
           <div style={{
             borderTop: '2px dashed rgba(0,0,0,0.12)',
             padding: '10px 20px',
             fontFamily: '"Fredoka", sans-serif',
             fontSize: '0.82rem',
-            color: 'rgba(26,26,26,0.5)',
+            color: 'rgba(26,26,26,0.55)',
             textAlign: 'center',
+            lineHeight: 1.5,
           }}>
-            📌 Placeholder — Los diagramas UML reales se integrarán próximamente.
+            {sys.desc}
           </div>
         </motion.div>
       </motion.div>
     </AnimatePresence>
-  )
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   TECH STACK BADGES
-══════════════════════════════════════════════════════════════════ */
-function TechBadges({ inView }) {
-  return (
-    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center' }}>
-      {TECH_STACK.map((t, i) => (
-        <motion.div
-          key={t.label}
-          initial={{ opacity: 0, scale: 0.7 }}
-          animate={inView
-            ? { opacity: 1, scale: 1,
-                transition: { duration: 0.45, ease: [0.22, 1, 0.36, 1], delay: 0.1 + i * 0.06 } }
-            : { opacity: 0, scale: 0.7 }
-          }
-          whileHover={{ y: -5, scale: 1.08, transition: { duration: 0.18 } }}
-          style={{
-            background: t.bg,
-            border: '2.5px solid #1A1A1A',
-            boxShadow: '3px 3px 0 #1A1A1A',
-            borderRadius: '12px',
-            padding: '10px 16px',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '5px',
-            cursor: 'default',
-            minWidth: '76px',
-          }}
-        >
-          <span style={{ fontSize: '22px' }}>{t.icon}</span>
-          <span style={{
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '6.5px',
-            color: t.color,
-            letterSpacing: '0.04em',
-            textAlign: 'center',
-            lineHeight: 1.5,
-          }}>
-            {t.label}
-          </span>
-        </motion.div>
-      ))}
-    </div>
   )
 }
 
@@ -713,23 +645,6 @@ export default function CodeBehind() {
               onExpand={setExpandedUML} />
           ))}
         </div>
-
-        {/* ── Tech Stack ── */}
-        <SectionLabel emoji="⚙️" text="Stack Tecnológico" color="#A678CC" bg="#F8F4FF" delay={0.18} inView={inView} />
-
-        <motion.div
-          {...revealUp(0.22)}
-          animate={inView ? revealUp(0.22).animate : revealUp(0.22).initial}
-          style={{
-            background: '#F5EEC8',
-            border: '3px solid #1A1A1A',
-            boxShadow: '5px 5px 0 #1A1A1A',
-            borderRadius: '18px',
-            padding: 'clamp(20px, 3vw, 32px)',
-          }}
-        >
-          <TechBadges inView={inView} />
-        </motion.div>
 
         {/* ── Features ── */}
         <SectionLabel emoji="🔧" text="Sistemas del Juego" color="#3DA35D" bg="#F2FFF5" delay={0.2} inView={inView} />

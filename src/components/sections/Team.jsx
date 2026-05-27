@@ -1,5 +1,12 @@
-import { useRef } from 'react'
+import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
+
+import fotoOscar from '@/assets/team/oscar.jpeg'
+import fotoLuis from '@/assets/team/luis.jpeg'
+import fotoJesus from '@/assets/team/jesus.jpeg'
+import fotoFranklin from '@/assets/team/franklin.jpeg'
+import fotoJoel from '@/assets/team/joel.jpeg'
+import fotoMaikel from '@/assets/team/maikel.jpeg'
 
 /* ══════════════════════════════════════════════════════════════════
    ANIMATION HELPERS
@@ -29,7 +36,7 @@ const TEAM = [
     sticker: '👑',
     stickerBg: '#FFE566',
     tilt:    -2,
-    avatar:  { skin: '#FDDCAC', hair: '#4A2C0A', shirt: '#A678CC', feature: 'smile' },
+    photo:   fotoOscar,
   },
   {
     name:    'Luis Villarreal',
@@ -40,7 +47,7 @@ const TEAM = [
     sticker: '🧩',
     stickerBg: '#FFE566',
     tilt:    -1.5,
-    avatar:  { skin: '#C68642', hair: '#1A1A1A', shirt: '#FF8C00', feature: 'cool' },
+    photo:   fotoLuis,
   },
   {
     name:    'Jesús De León',
@@ -51,7 +58,7 @@ const TEAM = [
     sticker: '📄',
     stickerBg: '#A8D4F5',
     tilt:    -1,
-    avatar:  { skin: '#C68642', hair: '#1A1A1A', shirt: '#1E88E5', feature: 'sunglasses' },
+    photo:   fotoJesus,
   },
   {
     name:    'Franklin Olivero',
@@ -62,7 +69,7 @@ const TEAM = [
     sticker: '🐛',
     stickerBg: '#C9A8E0',
     tilt:    1,
-    avatar:  { skin: '#FDDCAC', hair: '#333', shirt: '#00ACC1', feature: 'happy' },
+    photo:   fotoFranklin,
   },
   {
     name:    'Joel Trespalacios',
@@ -73,7 +80,7 @@ const TEAM = [
     sticker: '🎨',
     stickerBg: '#A8D8A8',
     tilt:    1.5,
-    avatar:  { skin: '#FDDCAC', hair: '#1A1A1A', shirt: '#3DA35D', feature: 'glasses' },
+    photo:   fotoJoel,
   },
   {
     name:    'Maikel Ortiz',
@@ -84,7 +91,7 @@ const TEAM = [
     sticker: '🗺️',
     stickerBg: '#FFB3C6',
     tilt:    2,
-    avatar:  { skin: '#FDDCAC', hair: '#8B4513', shirt: '#FF5757', feature: 'smile' },
+    photo:   fotoMaikel,
   },
 ]
 
@@ -92,7 +99,7 @@ const TEAM = [
    TECH STACK
 ══════════════════════════════════════════════════════════════════ */
 const TECH = [
-  { label: 'Unity 6',    icon: '🎮', color: '#1A1A1A', bg: '#F5EEC8', desc: 'Motor de juego' },
+  { label: 'Unity 6',    icon: '🎮', color: '#1A1A1A', bg: '#FFFFFF', desc: 'Motor de juego' },
   { label: 'C#',         icon: '💻', color: '#A678CC', bg: '#F8F4FF', desc: 'Lenguaje principal' },
   { label: 'VR / XR',   icon: '🥽', color: '#1E88E5', bg: '#F0F8FF', desc: 'Realidad Virtual' },
   { label: 'Git',        icon: '🌿', color: '#3DA35D', bg: '#F2FFF5', desc: 'Control de versiones' },
@@ -132,105 +139,55 @@ function PixelStar({ color = '#FFE566', size = 14, style = {} }) {
   )
 }
 
-/* Pixel avatar generator */
-function PixelAvatar({ skin, hair, shirt, feature, size = 64 }) {
-  return (
-    <svg viewBox="0 0 32 36" width={size} height={size * 36/32}
-      style={{ imageRendering: 'pixelated', display: 'block' }} aria-hidden="true">
-      {/* Body/shirt */}
-      <rect x="6"  y="24" width="20" height="12" fill={shirt} />
-      {/* Collar */}
-      <rect x="13" y="24" width="6"  height="4"  fill="rgba(255,255,255,0.3)" />
-      {/* Neck */}
-      <rect x="13" y="20" width="6"  height="5"  fill={skin} />
-      {/* Head */}
-      <rect x="8"  y="8"  width="16" height="14" fill={skin} />
-      {/* Hair */}
-      <rect x="7"  y="6"  width="18" height="5"  fill={hair} />
-      <rect x="7"  y="8"  width="3"  height="6"  fill={hair} />
-      <rect x="22" y="8"  width="3"  height="6"  fill={hair} />
-      {/* Eyes */}
-      {feature === 'sunglasses' ? (
-        <>
-          <rect x="10" y="13" width="5" height="3" fill="#1A1A1A" rx="1" />
-          <rect x="17" y="13" width="5" height="3" fill="#1A1A1A" rx="1" />
-          <rect x="15" y="14" width="2" height="1" fill="#555" />
-        </>
-      ) : feature === 'glasses' ? (
-        <>
-          <rect x="10" y="13" width="4" height="3" fill="none"
-            stroke="#1A1A1A" strokeWidth="0.8" />
-          <rect x="17" y="13" width="4" height="3" fill="none"
-            stroke="#1A1A1A" strokeWidth="0.8" />
-          <rect x="14" y="14" width="3" height="1" fill="#1A1A1A" />
-          <rect x="11" y="14" width="2" height="1" fill="#1A1A1A" />
-          <rect x="18" y="14" width="2" height="1" fill="#1A1A1A" />
-        </>
-      ) : (
-        <>
-          <rect x="11" y="13" width="3" height="3" fill="#1A1A1A" />
-          <rect x="18" y="13" width="3" height="3" fill="#1A1A1A" />
-          <rect x="12" y="13" width="1" height="1" fill="rgba(255,255,255,0.6)" />
-          <rect x="19" y="13" width="1" height="1" fill="rgba(255,255,255,0.6)" />
-        </>
-      )}
-      {/* Mouth */}
-      {feature === 'happy' ? (
-        <>
-          <rect x="12" y="18" width="8" height="1" fill="#1A1A1A" />
-          <rect x="11" y="17" width="2" height="2" fill="#1A1A1A" />
-          <rect x="19" y="17" width="2" height="2" fill="#1A1A1A" />
-        </>
-      ) : feature === 'cool' ? (
-        <rect x="13" y="18" width="6" height="1.5" fill="#1A1A1A" />
-      ) : (
-        <>
-          <rect x="13" y="18" width="6" height="1"  fill="#1A1A1A" />
-          <rect x="12" y="17" width="2" height="1"  fill="#1A1A1A" />
-          <rect x="18" y="17" width="2" height="1"  fill="#1A1A1A" />
-        </>
-      )}
-      {/* Cheeks */}
-      <rect x="9"  y="16" width="3" height="2" fill="rgba(255,150,150,0.35)" />
-      <rect x="20" y="16" width="3" height="2" fill="rgba(255,150,150,0.35)" />
-      {/* Arms */}
-      <rect x="2"  y="24" width="5"  height="8" fill={shirt} />
-      <rect x="25" y="24" width="5"  height="8" fill={shirt} />
-      <rect x="2"  y="30" width="5"  height="4" fill={skin} />
-      <rect x="25" y="30" width="5"  height="4" fill={skin} />
-    </svg>
-  )
-}
-
 /* ══════════════════════════════════════════════════════════════════
    TEAM CARD  (polaroid / sticker style)
 ══════════════════════════════════════════════════════════════════ */
+const CARD_SPRING = { type: 'spring', stiffness: 420, damping: 28, mass: 0.9 }
+
 function TeamCard({ member, delay, inView }) {
+  const [hovered, setHovered] = useState(false)
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 50, rotate: member.tilt * 0.5, filter: 'blur(4px)' }}
       animate={inView
-        ? { opacity: 1, y: 0, rotate: member.tilt, filter: 'blur(0px)',
-            transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay } }
+        ? {
+            opacity: 1,
+            y: hovered ? -4 : 0,
+            rotate: hovered ? member.tilt * 0.55 : member.tilt,
+            scale: hovered ? 1.012 : 1,
+            filter: 'blur(0px)',
+            boxShadow: hovered
+              ? `7px 9px 0 #1A1A1A, 0 14px 32px ${member.color}2e`
+              : '5px 5px 0 #1A1A1A',
+          }
         : { opacity: 0, y: 50, rotate: member.tilt * 0.5, filter: 'blur(4px)' }
       }
-      whileHover={{
-        y: -8, rotate: 0, scale: 1.03,
-        transition: { duration: 0.25, ease: 'easeOut' },
+      transition={{
+        opacity: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
+        filter: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
+        y: CARD_SPRING,
+        rotate: CARD_SPRING,
+        scale: CARD_SPRING,
+        boxShadow: { duration: 0.22, ease: 'easeOut' },
       }}
+      onHoverStart={() => setHovered(true)}
+      onHoverEnd={() => setHovered(false)}
+      whileTap={{ scale: 0.992, y: -1, transition: { duration: 0.1 } }}
       style={{
         background: member.bg,
         border: '3px solid #1A1A1A',
-        boxShadow: '5px 5px 0 #1A1A1A',
         borderRadius: '16px',
-        padding: '20px 18px 22px',
+        height: '100%',
+        padding: '18px 16px 20px',
         display: 'flex',
         flexDirection: 'column',
         alignItems: 'center',
-        gap: '10px',
+        gap: '7px',
         position: 'relative',
         cursor: 'default',
         textAlign: 'center',
+        willChange: 'transform',
       }}
     >
       {/* Top color stripe (polaroid feel) */}
@@ -241,13 +198,23 @@ function TeamCard({ member, delay, inView }) {
 
       {/* Sticker */}
       <motion.div
-        animate={{ y: [0, -5, 0], rotate: [-5, 5, -5] }}
-        transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: delay * 0.5 }}
+        animate={hovered
+          ? { y: -8, rotate: 7, scale: 1.1 }
+          : { y: [0, -3, 0], rotate: [-3, 3, -3], scale: 1 }
+        }
+        transition={hovered
+          ? { type: 'spring', stiffness: 480, damping: 24 }
+          : {
+              y: { duration: 3.4, repeat: Infinity, ease: 'easeInOut', delay: delay * 0.5 },
+              rotate: { duration: 3.4, repeat: Infinity, ease: 'easeInOut', delay: delay * 0.5 },
+              scale: { duration: 0.2 },
+            }
+        }
         style={{
           position: 'absolute', top: '10px', right: '10px',
           background: member.stickerBg,
           border: '2px solid #1A1A1A',
-          boxShadow: '2px 2px 0 #1A1A1A',
+          boxShadow: hovered ? '3px 4px 0 #1A1A1A' : '2px 2px 0 #1A1A1A',
           borderRadius: '50%',
           width: '30px', height: '30px',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
@@ -258,56 +225,101 @@ function TeamCard({ member, delay, inView }) {
         {member.sticker}
       </motion.div>
 
-      {/* Avatar */}
-      <div style={{
-        background: 'rgba(255,255,255,0.6)',
-        border: `2.5px solid #1A1A1A`,
-        borderRadius: '50%',
-        padding: '10px',
-        boxShadow: `0 0 0 3px ${member.color}30`,
-        marginTop: '8px',
-      }}>
-        <PixelAvatar {...member.avatar} size={52} />
-      </div>
+      {/* Foto */}
+      <motion.div
+        animate={{
+          y: hovered ? -2 : 0,
+          scale: hovered ? 1.04 : 1,
+        }}
+        transition={CARD_SPRING}
+        style={{
+          width: 72,
+          height: 72,
+          borderRadius: '50%',
+          overflow: 'hidden',
+          border: '2.5px solid #1A1A1A',
+          boxShadow: hovered
+            ? `0 0 0 3px ${member.color}45, 0 6px 16px ${member.color}28`
+            : `0 0 0 3px ${member.color}30`,
+          marginTop: '6px',
+          flexShrink: 0,
+          background: '#fff',
+        }}
+      >
+        <img
+          src={member.photo}
+          alt={member.name}
+          width={72}
+          height={72}
+          loading="lazy"
+          decoding="async"
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            objectPosition: 'center top',
+            display: 'block',
+          }}
+        />
+      </motion.div>
 
       {/* Name */}
       <h4 style={{
         fontFamily: '"Fredoka", sans-serif',
         fontWeight: 700,
-        fontSize: '1.1rem',
+        fontSize: '1.08rem',
         color: '#1A1A1A',
-        lineHeight: 1.1,
+        lineHeight: 1.15,
+        margin: 0,
       }}>
         {member.name}
       </h4>
 
       {/* Role badge */}
-      <div style={{
-        background: member.color,
-        border: '2px solid #1A1A1A',
-        boxShadow: '2px 2px 0 #1A1A1A',
-        borderRadius: '6px',
-        padding: '3px 10px',
-        fontFamily: '"Press Start 2P", monospace',
-        fontSize: '6.5px',
-        color: '#fff',
-        letterSpacing: '0.04em',
-        lineHeight: 1.6,
-        textAlign: 'center',
-      }}>
+      <motion.div
+        animate={{ y: hovered ? -1 : 0 }}
+        transition={CARD_SPRING}
+        style={{
+          background: member.color,
+          border: '2px solid #1A1A1A',
+          boxShadow: hovered ? '3px 3px 0 #1A1A1A' : '2px 2px 0 #1A1A1A',
+          borderRadius: '6px',
+          padding: '2px 9px',
+          fontFamily: '"Press Start 2P", monospace',
+          fontSize: '6.5px',
+          color: '#fff',
+          letterSpacing: '0.04em',
+          lineHeight: 1.5,
+          textAlign: 'center',
+        }}
+      >
         {member.role}
-      </div>
+      </motion.div>
 
-      {/* Description */}
-      <p style={{
-        fontFamily: '"Fredoka", sans-serif',
-        fontSize: '0.83rem',
-        color: 'rgba(26,26,26,0.68)',
-        lineHeight: 1.55,
-        textAlign: 'center',
+      {/* Description — bloque flexible para uniformidad en grid */}
+      <div style={{
+        flex: 1,
+        display: 'flex',
+        alignItems: 'flex-start',
+        justifyContent: 'center',
+        width: '100%',
+        minHeight: '2.75em',
+        padding: '2px 2px 6px',
+        marginTop: '1px',
       }}>
-        {member.desc}
-      </p>
+        <p style={{
+          fontFamily: '"Fredoka", sans-serif',
+          fontSize: '0.8125rem',
+          color: 'rgba(26,26,26,0.68)',
+          lineHeight: 1.42,
+          textAlign: 'center',
+          margin: 0,
+          width: '100%',
+          maxWidth: '17.5rem',
+        }}>
+          {member.desc}
+        </p>
+      </div>
 
       {/* Bottom pixel line */}
       <div style={{
@@ -329,11 +341,14 @@ function MakingOf({ inView }) {
       {...revealUp(0.2)}
       animate={inView ? revealUp(0.2).animate : revealUp(0.2).initial}
       style={{
+        position: 'relative',
+        zIndex: 2,
         background: '#F5EEC8',
         border: '3px solid #1A1A1A',
         boxShadow: '6px 6px 0 #1A1A1A',
         borderRadius: '20px',
         padding: 'clamp(24px, 4vw, 36px)',
+        overflow: 'visible',
       }}
     >
       {/* Header */}
@@ -373,54 +388,87 @@ function MakingOf({ inView }) {
         Un proyecto universitario construido desde cero con pasión, código y mucha colaboración.
       </p>
 
-      {/* Tech badges */}
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
-        {TECH.map((t, i) => (
-          <motion.div
-            key={t.label}
-            initial={{ opacity: 0, scale: 0.7 }}
-            animate={inView
-              ? { opacity: 1, scale: 1,
-                  transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.25 + i * 0.07 } }
-              : { opacity: 0, scale: 0.7 }
-            }
-            whileHover={{ y: -4, scale: 1.06, transition: { duration: 0.18 } }}
-            style={{
-              background: t.bg,
-              border: '2.5px solid #1A1A1A',
-              boxShadow: '3px 3px 0 #1A1A1A',
-              borderRadius: '12px',
-              padding: '10px 16px',
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              gap: '4px',
-              cursor: 'default',
-              minWidth: '80px',
-            }}
-          >
-            <span style={{ fontSize: '22px' }}>{t.icon}</span>
-            <span style={{
-              fontFamily: '"Press Start 2P", monospace',
-              fontSize: '7px',
-              color: t.color,
-              letterSpacing: '0.04em',
-              lineHeight: 1.5,
-              textAlign: 'center',
-            }}>
-              {t.label}
-            </span>
-            <span style={{
-              fontFamily: '"Fredoka", sans-serif',
-              fontSize: '0.72rem',
-              color: 'rgba(26,26,26,0.5)',
-              textAlign: 'center',
-              lineHeight: 1.3,
-            }}>
-              {t.desc}
-            </span>
-          </motion.div>
-        ))}
+      {/* Tech badges — 7 en una fila */}
+      <div
+        className="w-full"
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          padding: '4px 10px 10px 4px',
+          marginRight: '-6px',
+          marginBottom: '-6px',
+        }}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(7, minmax(0, 1fr))',
+            gap: '8px',
+            width: '100%',
+          }}
+        >
+          {TECH.map((t, i) => {
+            const longLabel = t.label.length > 12
+            return (
+              <motion.div
+                key={t.label}
+                initial={{ opacity: 0, scale: 0.7 }}
+                animate={inView
+                  ? { opacity: 1, scale: 1,
+                      transition: { duration: 0.5, ease: [0.22, 1, 0.36, 1], delay: 0.25 + i * 0.07 } }
+                  : { opacity: 0, scale: 0.7 }
+                }
+                whileHover={{
+                  filter: 'brightness(1.05)',
+                  boxShadow: '4px 5px 0 #1A1A1A',
+                  zIndex: 2,
+                  transition: { duration: 0.18, ease: 'easeOut' },
+                }}
+                style={{
+                  position: 'relative',
+                  background: t.bg,
+                  border: '2.5px solid #1A1A1A',
+                  boxShadow: '3px 3px 0 #1A1A1A',
+                  borderRadius: '12px',
+                  padding: '8px 6px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'flex-start',
+                  gap: '3px',
+                  cursor: 'default',
+                  minWidth: 0,
+                  width: '100%',
+                  height: '100%',
+                }}
+              >
+                <span style={{ fontSize: '20px', lineHeight: 1 }}>{t.icon}</span>
+                <span style={{
+                  fontFamily: longLabel ? '"Fredoka", sans-serif' : '"Press Start 2P", monospace',
+                  fontWeight: longLabel ? 700 : 400,
+                  fontSize: longLabel ? '0.62rem' : '6.5px',
+                  color: t.color,
+                  letterSpacing: longLabel ? '0' : '0.04em',
+                  lineHeight: 1.35,
+                  textAlign: 'center',
+                  width: '100%',
+                }}>
+                  {t.label}
+                </span>
+                <span style={{
+                  fontFamily: '"Fredoka", sans-serif',
+                  fontSize: '0.65rem',
+                  color: 'rgba(26,26,26,0.5)',
+                  textAlign: 'center',
+                  lineHeight: 1.25,
+                  width: '100%',
+                }}>
+                  {t.desc}
+                </span>
+              </motion.div>
+            )
+          })}
+        </div>
       </div>
     </motion.div>
   )
@@ -717,7 +765,7 @@ export default function Team() {
         <SectionTitle inView={inView} />
 
         {/* Team cards — 3 cols desktop, 2 tablet, 1 mobile */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 items-stretch">
           {TEAM.map((member, i) => (
             <TeamCard key={member.name} member={member} delay={0.08 + i * 0.1} inView={inView} />
           ))}

@@ -19,6 +19,12 @@ const revealUp = (delay = 0) => ({
   transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
 })
 
+/** Bordes y sombras — negro suavizado (menos duro que 3px #1A1A1A pleno) */
+const L_BORDER      = '2px solid rgba(26,26,26,0.82)'
+const L_BORDER_MED  = '2px solid rgba(26,26,26,0.72)'
+const L_SHADOW      = '4px 4px 0 rgba(26,26,26,0.7)'
+const L_SHADOW_SM   = '3px 3px 0 rgba(26,26,26,0.65)'
+
 /* ══════════════════════════════════════════════════════════════════
    LEVEL DATA
 ══════════════════════════════════════════════════════════════════ */
@@ -28,7 +34,7 @@ const LEVELS = [
     tag: 'NIVEL 1',
     title: 'HUIDA',
     tagline: 'Corre. Esquiva. Sobrevive.',
-    desc: 'El jugador corre, esquiva obstáculos y sobrevive mientras es perseguido. Representa la ansiedad y la presión social.',
+    desc: 'El jugador corre, esquiva obstáculos y sobrevive bajo persecución, como metáfora de la ansiedad y la presión social.',
     color: '#FF5757',
     bgCard: '#FFF5F5',
     bgScene: '#FFE4E4',
@@ -93,7 +99,7 @@ function PixelStar({ color = '#FFE566', size = 14, style = {} }) {
 const LEVEL_IMAGES = [nivel1Img, nivel2Img, nivel3Img]
 
 /* ══════════════════════════════════════════════════════════════════
-   PROGRESS MAP — pixel path connecting the 3 levels
+   PROGRESS MAP — journey / progression system
 ══════════════════════════════════════════════════════════════════ */
 function ProgressMap({ inView }) {
   const nodes = [
@@ -104,75 +110,176 @@ function ProgressMap({ inView }) {
 
   return (
     <motion.div
-      {...revealUp(0.22)}
-      animate={inView ? revealUp(0.22).animate : revealUp(0.22).initial}
-      style={{ display: 'flex', justifyContent: 'center' }}
+      initial={{ opacity: 0, y: 28, filter: 'blur(4px)' }}
+      animate={inView ? { opacity: 1, y: 0, filter: 'blur(0px)' } : { opacity: 0, y: 28, filter: 'blur(4px)' }}
+      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: 0.22 }}
+      style={{ display: 'flex', justifyContent: 'center', width: '100%', padding: '0 0.25rem' }}
     >
-      <div style={{
-        background: '#F5EEC8',
-        border: '3px solid #1A1A1A',
-        boxShadow: '5px 5px 0 #1A1A1A',
-        borderRadius: '16px',
-        padding: '18px 28px',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '0',
-        maxWidth: '560px',
-        width: '100%',
-      }}>
-        {nodes.map((node, i) => (
-          <div key={node.label} style={{ display: 'flex', alignItems: 'center', flex: i < 2 ? '1' : 'none' }}>
-            {/* Node */}
-            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '7px', flexShrink: 0 }}>
-              <motion.div
-                animate={{ scale: [1, 1.08, 1] }}
-                transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut', delay: i * 0.7 }}
+      <motion.div
+        animate={{ y: [0, -2.5, 0] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'relative',
+          width: '100%',
+          maxWidth: '600px',
+          background: 'linear-gradient(180deg, #FFF8E7 0%, #F5EEC8 55%, #F0E9B8 100%)',
+          border: L_BORDER,
+          borderRadius: '18px',
+          boxShadow: `${L_SHADOW}, 0 10px 28px rgba(26,26,26,0.07)`,
+          padding: '12px clamp(16px, 4vw, 30px) 14px',
+          overflow: 'hidden',
+        }}
+      >
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: '5px',
+            borderRadius: '13px',
+            border: '1.5px dashed rgba(26,26,26,0.11)',
+            pointerEvents: 'none',
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            top: 0,
+            left: '12%',
+            right: '12%',
+            height: '1px',
+            background: 'linear-gradient(90deg, transparent, rgba(255,255,255,0.65), transparent)',
+            pointerEvents: 'none',
+          }}
+        />
+
+        <p
+          style={{
+            position: 'relative',
+            margin: '0 0 10px',
+            textAlign: 'center',
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '6.5px',
+            letterSpacing: '0.14em',
+            color: 'rgba(123,79,160,0.55)',
+          }}
+        >
+          ✦ TU CAMINO ✦
+        </p>
+
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center' }}>
+          {nodes.map((node, i) => (
+            <div
+              key={node.label}
+              style={{ display: 'flex', alignItems: 'center', flex: i < 2 ? '1' : 'none', minWidth: 0 }}
+            >
+              <div
                 style={{
-                  width: '46px', height: '46px',
-                  background: node.color,
-                  border: '2.5px solid #1A1A1A',
-                  borderRadius: '50%',
-                  display: 'flex', alignItems: 'center', justifyContent: 'center',
-                  fontSize: '20px',
-                  boxShadow: '3px 3px 0 #1A1A1A',
-                  cursor: 'default',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  gap: '6px',
+                  flexShrink: 0,
+                  padding: '0 2px',
                 }}
               >
-                {node.icon}
-              </motion.div>
-              <span style={{
-                fontFamily: '"Press Start 2P", monospace',
-                fontSize: '6px',
-                color: node.color,
-                letterSpacing: '0.04em',
-                textAlign: 'center',
-                lineHeight: 1.4,
-                maxWidth: '72px',
-              }}>
-                {node.label}
-              </span>
-            </div>
+                <motion.div
+                  initial={{ scale: 0, opacity: 0 }}
+                  animate={inView
+                    ? {
+                        scale: node.done ? [1, 1.06, 1] : [1, 1.04, 1],
+                        opacity: 1,
+                        boxShadow: node.done
+                          ? [
+                              '3px 3px 0 #1A1A1A, 0 0 10px rgba(255,87,87,0.35)',
+                              '3px 3px 0 #1A1A1A, 0 0 16px rgba(255,87,87,0.5)',
+                              '3px 3px 0 #1A1A1A, 0 0 10px rgba(255,87,87,0.35)',
+                            ]
+                          : '3px 3px 0 #1A1A1A',
+                      }
+                    : { scale: 0, opacity: 0 }
+                  }
+                  transition={{
+                    scale:   { duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.65 },
+                    boxShadow: { duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: i * 0.65 },
+                    default: { delay: 0.38 + i * 0.12, type: 'spring', stiffness: 260, damping: 16 },
+                  }}
+                  whileHover={{
+                    y: -2,
+                    scale: 1.07,
+                    boxShadow: `3px 3px 0 #1A1A1A, 0 0 14px ${node.color}42`,
+                    transition: { type: 'spring', stiffness: 400, damping: 20 },
+                  }}
+                  style={{
+                    position: 'relative',
+                    width: '48px',
+                    height: '48px',
+                    background: node.color,
+                    border: L_BORDER_MED,
+                    borderRadius: '50%',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '20px',
+                    cursor: 'default',
+                    opacity: node.done ? 1 : 0.92,
+                    boxShadow: L_SHADOW_SM,
+                  }}
+                >
+                  <span
+                    aria-hidden="true"
+                    style={{
+                      position: 'absolute',
+                      inset: '3px',
+                      borderRadius: '50%',
+                      boxShadow: 'inset 0 2px 0 rgba(255,255,255,0.35)',
+                      pointerEvents: 'none',
+                    }}
+                  />
+                  <span style={{ position: 'relative', zIndex: 1 }}>{node.icon}</span>
+                </motion.div>
 
-            {/* Connector path */}
-            {i < 2 && (
-              <div style={{ flex: 1, height: '20px', display: 'flex', alignItems: 'center', padding: '0 8px' }}>
-                <svg viewBox="0 0 80 16" width="100%" height="16" aria-hidden="true">
-                  {/* Dashed road */}
-                  <rect x="0" y="6" width="80" height="4" fill="#E8D8A0" rx="2" />
-                  {/* Dashes */}
-                  {[0,1,2,3].map(j => (
-                    <rect key={j} x={10 + j * 16} y="7" width="8" height="2" fill="#1A1A1A" opacity="0.25" rx="1" />
-                  ))}
-                  {/* Arrow tip */}
-                  <path d="M70 4 L78 8 L70 12" fill="none"
-                    stroke={nodes[i + 1].color} strokeWidth="2.5"
-                    strokeLinecap="round" strokeLinejoin="round" />
-                </svg>
+                <motion.span
+                  initial={{ opacity: 0, y: 4 }}
+                  animate={inView ? { opacity: 1, y: 0 } : { opacity: 0, y: 4 }}
+                  transition={{ delay: 0.48 + i * 0.1, duration: 0.45 }}
+                  style={{
+                    fontFamily: '"Press Start 2P", monospace',
+                    fontSize: '6px',
+                    color: node.color,
+                    letterSpacing: '0.04em',
+                    textAlign: 'center',
+                    lineHeight: 1.45,
+                    maxWidth: '76px',
+                    opacity: node.done ? 1 : 0.88,
+                  }}
+                >
+                  {node.label}
+                </motion.span>
               </div>
-            )}
-          </div>
-        ))}
-      </div>
+
+              {i < 2 && (
+                <div style={{ flex: 1, height: '20px', display: 'flex', alignItems: 'center', padding: '0 8px' }}>
+                  <svg viewBox="0 0 80 16" width="100%" height={16} aria-hidden="true">
+                    <rect x="0" y="6" width="80" height="4" fill="#E8D8A0" rx="2" />
+                    {[0, 1, 2, 3].map((j) => (
+                      <rect key={j} x={10 + j * 16} y="7" width="8" height="2" fill="#1A1A1A" opacity="0.25" rx="1" />
+                    ))}
+                    <path
+                      d="M70 4 L78 8 L70 12"
+                      fill="none"
+                      stroke={nodes[i + 1].color}
+                      strokeWidth="2.5"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </motion.div>
     </motion.div>
   )
 }
@@ -180,22 +287,277 @@ function ProgressMap({ inView }) {
 /* ══════════════════════════════════════════════════════════════════
    CONNECTORS (between cards)
 ══════════════════════════════════════════════════════════════════ */
+/** Ritmo compartido del cuerpo de card — alinea título, texto y tags entre niveles */
+const LEVEL_CARD_LAYOUT = {
+  bodyPadding: '14px 18px 16px',
+  titleMinHeight: '2.05em',
+  taglineMinHeight: '1.1rem',
+  tagsMinHeight: '1.85rem',
+  viewportRatio: '16 / 9',
+}
+
 function HConnector({ color }) {
   return (
-    <div style={{
-      width: '52px', flexShrink: 0,
-      display: 'flex', alignItems: 'center', justifyContent: 'center',
-      paddingTop: '110px', /* align with card midpoint */
-    }}>
-      <svg viewBox="0 0 52 20" width={52} height={20} aria-hidden="true">
-        {[0,1,2,3].map(i => (
-          <circle key={i} cx={6 + i * 10} cy={10} r="3" fill={color}
-            opacity={i % 2 === 0 ? 0.9 : 0.55} />
+    <div
+      aria-hidden="true"
+      style={{
+        width: '52px',
+        flexShrink: 0,
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        alignSelf: 'center',
+      }}
+    >
+      <svg viewBox="0 0 52 20" width={52} height={20}>
+        {[0, 1, 2, 3].map((i) => (
+          <circle
+            key={i}
+            cx={6 + i * 10}
+            cy={10}
+            r="3"
+            fill={color}
+            opacity={i % 2 === 0 ? 0.9 : 0.55}
+          />
         ))}
-        <path d="M42 5 L50 10 L42 15" fill="none" stroke={color}
-          strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" />
+        <path
+          d="M42 5 L50 10 L42 15"
+          fill="none"
+          stroke={color}
+          strokeWidth="2.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
       </svg>
     </div>
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   GAMEPLAY VIEWPORT — marco arcade / HUD sutil
+══════════════════════════════════════════════════════════════════ */
+const HUD_CORNERS = ['tl', 'tr', 'bl', 'br']
+
+function HudCorner({ corner, color }) {
+  const base = {
+    position: 'absolute',
+    width: '11px',
+    height: '11px',
+    zIndex: 4,
+    pointerEvents: 'none',
+    opacity: 0.72,
+    borderColor: color,
+    borderStyle: 'solid',
+  }
+  const map = {
+    tl: { top: 13, left: 13, borderWidth: '2px 0 0 2px' },
+    tr: { top: 13, right: 13, borderWidth: '2px 2px 0 0' },
+    bl: { bottom: 13, left: 13, borderWidth: '0 0 2px 2px' },
+    br: { bottom: 13, right: 13, borderWidth: '0 2px 2px 0' },
+  }
+  return <span aria-hidden="true" style={{ ...base, ...map[corner] }} />
+}
+
+function LevelGameplayViewport({ src, alt, color, bgScene, stripeColor, children }) {
+  return (
+    <div
+      style={{
+        position: 'relative',
+        width: '100%',
+        minWidth: 0,
+        aspectRatio: LEVEL_CARD_LAYOUT.viewportRatio,
+        flex: '0 0 auto',
+        flexShrink: 0,
+        background: `linear-gradient(180deg, #14141a 0%, ${bgScene} 120%)`,
+        borderBottom: L_BORDER,
+        overflow: 'hidden',
+      }}
+    >
+      <motion.div
+        aria-hidden="true"
+        animate={{ opacity: [0.3, 0.5, 0.3] }}
+        transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+        style={{
+          position: 'absolute',
+          inset: '-15%',
+          background: `radial-gradient(ellipse 72% 62% at 50% 42%, ${color}20, transparent 70%)`,
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        style={{
+          position: 'absolute',
+          inset: '7px',
+          borderRadius: '8px',
+          overflow: 'hidden',
+          border: L_BORDER_MED,
+          background: '#08080c',
+          boxShadow: `
+            inset 0 0 0 1px rgba(255,255,255,0.09),
+            inset 0 0 32px rgba(0,0,0,0.22),
+            0 0 16px ${color}14
+          `,
+        }}
+      >
+        <img
+          src={src}
+          alt={alt}
+          style={{
+            width: '100%',
+            height: '100%',
+            objectFit: 'cover',
+            display: 'block',
+            imageRendering: 'pixelated',
+          }}
+        />
+
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 1,
+            pointerEvents: 'none',
+            backgroundImage:
+              'repeating-linear-gradient(0deg, transparent 0px, transparent 2px, rgba(0,0,0,0.024) 2px, rgba(0,0,0,0.024) 4px)',
+            opacity: 0.85,
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 1,
+            pointerEvents: 'none',
+            background:
+              'radial-gradient(ellipse 94% 88% at 50% 48%, transparent 52%, rgba(0,0,0,0.16) 100%)',
+          }}
+        />
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            inset: 0,
+            zIndex: 1,
+            pointerEvents: 'none',
+            background:
+              'linear-gradient(140deg, rgba(255,255,255,0.055) 0%, transparent 40%, transparent 68%, rgba(0,0,0,0.05) 100%)',
+          }}
+        />
+      </div>
+
+      {HUD_CORNERS.map((corner) => (
+        <HudCorner key={corner} corner={corner} color={color} />
+      ))}
+
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: 7,
+          left: 7,
+          right: 7,
+          height: '1px',
+          zIndex: 3,
+          background: `linear-gradient(90deg, transparent, ${color}55, transparent)`,
+          opacity: 0.55,
+          pointerEvents: 'none',
+        }}
+      />
+
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          bottom: 0,
+          left: 0,
+          right: 0,
+          height: '5px',
+          zIndex: 3,
+          background: `repeating-linear-gradient(90deg, ${stripeColor} 0px, ${stripeColor} 8px, transparent 8px, transparent 16px)`,
+          opacity: 0.45,
+          pointerEvents: 'none',
+        }}
+      />
+
+      {children}
+    </div>
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   GAMEPLAY TAGS — pixel pills con microinteracción
+══════════════════════════════════════════════════════════════════ */
+function LevelGameplayTag({ tag, color, bgScene, tilt, tagIndex, cardDelay, inView }) {
+  return (
+    <motion.span
+      initial={{ opacity: 0, y: 7, scale: 0.94 }}
+      animate={inView ? { opacity: 1, y: 0, scale: 1 } : { opacity: 0, y: 7, scale: 0.94 }}
+      transition={{
+        delay: cardDelay + 0.55 + tagIndex * 0.07,
+        type: 'spring',
+        stiffness: 280,
+        damping: 18,
+      }}
+      whileHover={{
+        y: -2,
+        scale: 1.042,
+        rotate: tilt,
+        boxShadow: `3px 3px 0 rgba(26,26,26,0.78), 0 0 14px ${color}34, inset 0 1px 0 rgba(255,255,255,0.62)`,
+        transition: { type: 'spring', stiffness: 420, damping: 20 },
+      }}
+      whileTap={{
+        y: -1,
+        scale: 0.985,
+        rotate: tilt * 0.45,
+        transition: { type: 'spring', stiffness: 500, damping: 22 },
+      }}
+      style={{
+        position: 'relative',
+        display: 'inline-flex',
+        alignItems: 'center',
+        fontFamily: '"Fredoka", sans-serif',
+        fontSize: '0.78rem',
+        fontWeight: 600,
+        color,
+        background: bgScene,
+        border: '2px solid #1A1A1A',
+        borderRadius: '7px',
+        padding: '3px 11px 4px',
+        letterSpacing: '0.02em',
+        lineHeight: 1.2,
+        cursor: 'default',
+        boxShadow: `2px 2px 0 rgba(26,26,26,0.72), inset 0 1px 0 rgba(255,255,255,0.52)`,
+      }}
+    >
+      <span
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          left: '5px',
+          right: '5px',
+          top: '2px',
+          height: '1px',
+          borderRadius: '1px',
+          background: `linear-gradient(90deg, transparent, ${color}50, transparent)`,
+          opacity: 0.75,
+          pointerEvents: 'none',
+        }}
+      />
+      <span
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          borderRadius: '5px',
+          boxShadow: `inset 0 -2px 0 ${color}22`,
+          pointerEvents: 'none',
+        }}
+      />
+      <span style={{ position: 'relative', zIndex: 1 }}>{tag}</span>
+    </motion.span>
   )
 }
 
@@ -204,53 +566,44 @@ function HConnector({ color }) {
 ══════════════════════════════════════════════════════════════════ */
 function LevelCard({ level, index, inView }) {
   const img   = LEVEL_IMAGES[index]
-  const delay = 0.1 + index * 0.15
+  const cardDelay   = 0.1 + index * 0.15
+  const compactDesc = index === 0
 
   return (
     <motion.div
+      className="w-full shrink-0 min-w-[260px] sm:min-w-0 sm:shrink"
       initial={{ opacity: 0, y: 50, filter: 'blur(4px)' }}
       animate={inView
         ? { opacity: 1, y: 0, filter: 'blur(0px)',
-            transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay } }
+            transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay: cardDelay } }
         : { opacity: 0, y: 50, filter: 'blur(4px)' }
       }
       whileHover={{ y: -7, transition: { duration: 0.28, ease: 'easeOut' } }}
       style={{
         background: level.bgCard,
-        border: '3px solid #1A1A1A',
-        boxShadow: '5px 5px 0 #1A1A1A',
+        border: L_BORDER,
+        boxShadow: L_SHADOW,
         borderRadius: '18px',
         overflow: 'hidden',
         flex: '1 1 0',
-        minWidth: 'min(100%, 260px)',
+        alignSelf: 'stretch',
+        minWidth: 0,
+        width: '100%',
         cursor: 'default',
         display: 'flex',
         flexDirection: 'column',
       }}
     >
-      {/* ── Screenshot area ── */}
-      <div style={{
-        position: 'relative',
-        background: level.bgScene,
-        borderBottom: '3px solid #1A1A1A',
-        overflow: 'hidden',
-        aspectRatio: '16 / 9',
-        flexShrink: 0,
-      }}>
-        <img
-          src={img}
-          alt={`Captura del ${level.tag}: ${level.title}`}
-          style={{
-            width: '100%', height: '100%',
-            objectFit: 'cover',
-            display: 'block',
-            imageRendering: 'pixelated',
-          }}
-        />
-
+      <LevelGameplayViewport
+        src={img}
+        alt={`Captura del ${level.tag}: ${level.title}`}
+        color={level.color}
+        bgScene={level.bgScene}
+        stripeColor={level.color}
+      >
         {/* Number badge */}
         <div style={{
-          position: 'absolute', top: '10px', left: '10px', zIndex: 2,
+          position: 'absolute', top: '10px', left: '10px', zIndex: 5,
           background: level.color,
           border: '2.5px solid #1A1A1A',
           boxShadow: '3px 3px 0 #1A1A1A',
@@ -269,7 +622,7 @@ function LevelCard({ level, index, inView }) {
           animate={{ y: [0, -6, 0] }}
           transition={{ duration: 2.6, repeat: Infinity, ease: 'easeInOut', delay: index * 0.5 }}
           style={{
-            position: 'absolute', top: '9px', right: '10px', zIndex: 2,
+            position: 'absolute', top: '9px', right: '10px', zIndex: 5,
             background: level.stickerBg,
             border: '2px solid #1A1A1A',
             boxShadow: '2px 2px 0 #1A1A1A',
@@ -282,94 +635,139 @@ function LevelCard({ level, index, inView }) {
           {level.sticker}
         </motion.div>
 
-        {/* Bottom pixel stripe */}
-        <div style={{
-          position: 'absolute', bottom: 0, left: 0, right: 0, height: '5px',
-          background: `repeating-linear-gradient(90deg, ${level.color} 0px, ${level.color} 8px, transparent 8px, transparent 16px)`,
-          opacity: 0.45,
-        }} />
-      </div>
-
-      {/* ── Card body ── */}
-      <div style={{ padding: '20px 22px 24px', display: 'flex', flexDirection: 'column', flex: 1 }}>
-        {/* Level tag pill */}
-        <div style={{
-          display: 'inline-flex', alignItems: 'center', gap: '5px',
-          background: level.color,
-          border: '2px solid #1A1A1A',
-          borderRadius: '6px',
-          padding: '3px 10px',
-          marginBottom: '11px',
-          fontFamily: '"Press Start 2P", monospace',
-          fontSize: '7.5px',
-          color: '#fff',
-          letterSpacing: '0.04em',
-          boxShadow: '2px 2px 0 #1A1A1A',
-          width: 'fit-content',
-        }}>
-          {level.tag}
+        {/* Tiny HUD — gameplay indicator */}
+        <div
+          aria-hidden="true"
+          style={{
+            position: 'absolute',
+            bottom: '14px',
+            left: '14px',
+            zIndex: 5,
+            display: 'flex',
+            alignItems: 'center',
+            gap: '5px',
+            padding: '2px 7px 3px',
+            background: 'rgba(10,10,14,0.55)',
+            border: '1.5px solid rgba(26,26,26,0.65)',
+            borderRadius: '4px',
+            backdropFilter: 'blur(2px)',
+          }}
+        >
+          <span
+            style={{
+              width: '5px',
+              height: '5px',
+              borderRadius: '50%',
+              background: level.color,
+              boxShadow: `0 0 6px ${level.color}`,
+            }}
+          />
+          <span
+            style={{
+              fontFamily: '"Press Start 2P", monospace',
+              fontSize: '5px',
+              color: 'rgba(255,255,255,0.88)',
+              letterSpacing: '0.08em',
+            }}
+          >
+            PLAY
+          </span>
         </div>
+      </LevelGameplayViewport>
 
-        {/* Title */}
-        <h3 style={{
-          fontFamily: '"Fredoka", sans-serif',
-          fontWeight: 700,
-          fontSize: 'clamp(1.55rem, 2.6vw, 2.1rem)',
-          color: level.color,
-          WebkitTextStroke: '1px #1A1A1A',
-          paintOrder: 'stroke fill',
-          lineHeight: 1.05,
-          marginBottom: '5px',
-        }}>
-          {level.title}
-        </h3>
+      {/* ── Card body — columnas iguales: cabecera fija, desc flexible, tags al fondo ── */}
+      <div style={{
+        padding: LEVEL_CARD_LAYOUT.bodyPadding,
+        display: 'flex',
+        flexDirection: 'column',
+        flex: 1,
+        minHeight: 0,
+      }}>
+        <div style={{ flexShrink: 0 }}>
+          {/* Level tag pill */}
+          <div style={{
+            display: 'inline-flex', alignItems: 'center', gap: '5px',
+            background: level.color,
+            border: '2px solid #1A1A1A',
+            borderRadius: '6px',
+            padding: '2px 9px',
+            marginBottom: '7px',
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '7.5px',
+            color: '#fff',
+            letterSpacing: '0.04em',
+            boxShadow: '2px 2px 0 #1A1A1A',
+            width: 'fit-content',
+            minHeight: '1.35rem',
+          }}>
+            {level.tag}
+          </div>
 
-        {/* Tagline */}
-        <p style={{
-          fontFamily: '"Patrick Hand", cursive',
-          fontSize: '0.85rem',
-          color: 'rgba(26,26,26,0.52)',
-          marginBottom: '12px',
-          fontStyle: 'italic',
-          letterSpacing: '0.01em',
-        }}>
-          {level.tagline}
-        </p>
+          {/* Title */}
+          <h3 style={{
+            fontFamily: '"Fredoka", sans-serif',
+            fontWeight: 700,
+            fontSize: 'clamp(1.55rem, 2.6vw, 2.1rem)',
+            color: level.color,
+            WebkitTextStroke: '1px #1A1A1A',
+            paintOrder: 'stroke fill',
+            lineHeight: 1.05,
+            margin: '0 0 3px',
+            minHeight: LEVEL_CARD_LAYOUT.titleMinHeight,
+          }}>
+            {level.title}
+          </h3>
+
+          {/* Tagline */}
+          <p style={{
+            fontFamily: '"Patrick Hand", cursive',
+            fontSize: '0.82rem',
+            color: 'rgba(26,26,26,0.52)',
+            margin: '0 0 8px',
+            fontStyle: 'italic',
+            letterSpacing: '0.01em',
+            lineHeight: 1.28,
+            minHeight: LEVEL_CARD_LAYOUT.taglineMinHeight,
+          }}>
+            {level.tagline}
+          </p>
+        </div>
 
         {/* Description */}
         <p style={{
           fontFamily: '"Fredoka", sans-serif',
-          fontSize: '0.93rem',
+          fontSize: compactDesc ? '0.88rem' : '0.9rem',
           color: 'rgba(26,26,26,0.78)',
-          lineHeight: 1.65,
-          marginBottom: '18px',
-          flex: 1,
+          lineHeight: compactDesc ? 1.48 : 1.54,
+          letterSpacing: compactDesc ? '-0.008em' : '0',
+          margin: 0,
+          flex: '0 1 auto',
+          textWrap: 'pretty',
         }}>
           {level.desc}
         </p>
 
-        {/* Gameplay tags */}
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '6px' }}>
-          {level.tags.map((tag) => (
-            <motion.span
+        {/* Gameplay tags — baseline compartida entre cards */}
+        <div style={{
+          display: 'flex',
+          flexWrap: 'wrap',
+          gap: '5px',
+          marginTop: '10px',
+          flexShrink: 0,
+          minHeight: LEVEL_CARD_LAYOUT.tagsMinHeight,
+          alignItems: 'flex-end',
+        }}>
+          {level.tags.map((tag, tagIndex) => (
+            <LevelGameplayTag
               key={tag}
-              whileHover={{ scale: 1.06, transition: { duration: 0.15 } }}
-              style={{
-                fontFamily: '"Fredoka", sans-serif',
-                fontSize: '0.78rem',
-                fontWeight: 600,
-                color: level.color,
-                background: level.bgScene,
-                border: `2px solid ${level.color}`,
-                borderRadius: '7px',
-                padding: '3px 11px',
-                letterSpacing: '0.02em',
-                cursor: 'default',
-                boxShadow: `2px 2px 0 ${level.color}40`,
-              }}
-            >
-              {tag}
-            </motion.span>
+              tag={tag}
+              color={level.color}
+              bgScene={level.bgScene}
+              tilt={tagIndex % 2 === 0 ? -1.3 : 1.3}
+              tagIndex={tagIndex}
+              cardDelay={cardDelay}
+              inView={inView}
+            />
           ))}
         </div>
       </div>
@@ -522,8 +920,14 @@ export default function Levels() {
         {/* Progress map */}
         <ProgressMap inView={inView} />
 
-        {/* 3 niveles en fila (único layout; evita duplicar por style inline vs Tailwind) */}
-        <div className="flex items-start w-full min-w-0 overflow-x-auto pb-2 -mx-2 px-2 sm:overflow-visible sm:pb-0 sm:mx-0 sm:px-0">
+        {/* 3 niveles — grid en desktop para columnas y viewports idénticos */}
+        <div
+          className="flex w-full min-w-0 items-stretch overflow-x-auto pb-2 -mx-2 px-2
+            sm:mx-0 sm:grid sm:items-start sm:overflow-visible sm:pb-0 sm:px-0"
+          style={{
+            gridTemplateColumns: 'minmax(0, 1fr) 52px minmax(0, 1fr) 52px minmax(0, 1fr)',
+          }}
+        >
           <LevelCard level={LEVELS[0]} index={0} inView={inView} />
           <HConnector color={LEVELS[0].color} />
           <LevelCard level={LEVELS[1]} index={1} inView={inView} />

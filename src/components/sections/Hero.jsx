@@ -1440,6 +1440,9 @@ function HeroButtons() {
       {/* Secondary — Trailer */}
       <motion.button
         type="button"
+        onClick={() => {
+          document.querySelector('#trailer')?.scrollIntoView({ behavior: 'smooth', block: 'start' })
+        }}
         className={`${heroCtaClass} overflow-visible pl-4 pr-5 sm:pl-5 sm:pr-6`}
         style={{
           ...ctaSize,

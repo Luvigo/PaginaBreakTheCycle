@@ -176,7 +176,7 @@ export default function Navbar() {
   }
 
   return (
-    <>
+    <div data-site-header>
       <motion.nav
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -214,7 +214,7 @@ export default function Navbar() {
             </nav>
 
             <div className="hidden lg:flex items-center gap-2 shrink-0">
-              <NavButton bg="#F0E8FF" onClick={() => scrollToHash('#about')}>
+              <NavButton bg="#F0E8FF" onClick={() => scrollToHash('#trailer')}>
                 🎬 Trailer
               </NavButton>
               <NavButton
@@ -309,7 +309,7 @@ export default function Navbar() {
               transition={{ delay: 0.35 }}
               className="flex flex-col gap-3 mt-2 w-56"
             >
-              <NavButton bg="#F0E8FF" onClick={() => scrollToHash('#about')}>
+              <NavButton bg="#F0E8FF" onClick={() => scrollToHash('#trailer')}>
                 🎬 Ver Trailer
               </NavButton>
               <NavButton
@@ -322,6 +322,6 @@ export default function Navbar() {
           </motion.div>
         )}
       </AnimatePresence>
-    </>
+    </div>
   )
 }

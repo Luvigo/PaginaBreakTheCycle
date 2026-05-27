@@ -1,8 +1,8 @@
 import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
-import nivel1Img from '@/assets/images/Nivel1.png'
-import nivel2Img from '@/assets/images/Nivel2.png'
-import nivel3Img from '@/assets/images/Level3.png'
+
+/** Cuando tengas el embed de YouTube/Vimeo, pégalo aquí */
+const TRAILER_EMBED_URL = ''
 
 /* ══════════════════════════════════════════════════════════════════
    ANIMATION HELPERS
@@ -19,47 +19,8 @@ const revealUp = (delay = 0) => ({
   transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay },
 })
 
-/* ══════════════════════════════════════════════════════════════════
-   GALLERY DATA
-══════════════════════════════════════════════════════════════════ */
-const ITEMS = [
-  {
-    id: 'l3',
-    image:    nivel3Img,
-    level:    'NIVEL 3',
-    title:    'ENFRENTAMIENTO',
-    desc:     'En realidad virtual, enfrenta el bullying y rompe el ciclo desde la valentía.',
-    color:    '#A678CC',
-    bgAccent: '#EDE8FF',
-    sticker:  '✨',
-    stickerBg: '#FFB3C6',
-    featured: true,
-  },
-  {
-    id: 'l1',
-    image:    nivel1Img,
-    level:    'NIVEL 1',
-    title:    'HUIDA',
-    desc:     'Corre, esquiva obstáculos y sobrevive mientras eres perseguido.',
-    color:    '#FF5757',
-    bgAccent: '#FFE4E4',
-    sticker:  '⚡',
-    stickerBg: '#FFE566',
-    featured: false,
-  },
-  {
-    id: 'l2',
-    image:    nivel2Img,
-    level:    'NIVEL 2',
-    title:    'SUPERACIÓN',
-    desc:     'Aprende, adapta y supera cada plataforma con control y determinación.',
-    color:    '#3DA35D',
-    bgAccent: '#DCFFE8',
-    sticker:  '🌱',
-    stickerBg: '#C9A8E0',
-    featured: false,
-  },
-]
+const T_BORDER = '2px solid rgba(26,26,26,0.82)'
+const T_SHADOW = '5px 5px 0 rgba(26,26,26,0.65)'
 
 /* ══════════════════════════════════════════════════════════════════
    PIXEL DECORATIONS
@@ -82,636 +43,687 @@ function PixelStar({ color = '#FFE566', size = 14, style = {} }) {
 }
 
 /* ══════════════════════════════════════════════════════════════════
-   GALLERY CARD
-══════════════════════════════════════════════════════════════════ */
-function GalleryCard({ item, delay, inView, minHeight = 240 }) {
-  const [hovered, setHovered] = useState(false)
-
-  return (
-    <motion.div
-      initial={{ opacity: 0, y: 45, filter: 'blur(4px)' }}
-      animate={inView
-        ? { opacity: 1, y: 0, filter: 'blur(0px)',
-            transition: { duration: 0.7, ease: [0.22, 1, 0.36, 1], delay } }
-        : { opacity: 0, y: 45, filter: 'blur(4px)' }
-      }
-      onHoverStart={() => setHovered(true)}
-      onHoverEnd={() => setHovered(false)}
-      style={{
-        border: '3px solid #1A1A1A',
-        boxShadow: hovered ? '7px 7px 0 #1A1A1A' : '5px 5px 0 #1A1A1A',
-        borderRadius: '16px',
-        overflow: 'hidden',
-        position: 'relative',
-        cursor: 'pointer',
-        height: '100%',
-        minHeight,
-        background: item.bgAccent,
-        transition: 'box-shadow 0.2s ease',
-        transform: hovered ? 'translate(-2px,-2px)' : 'translate(0,0)',
-      }}
-    >
-      {/* Image */}
-      <motion.img
-        src={item.image}
-        alt={`${item.level}: ${item.title}`}
-        animate={{ scale: hovered ? 1.06 : 1 }}
-        transition={{ duration: 0.4, ease: 'easeOut' }}
-        style={{
-          width: '100%', height: '100%',
-          objectFit: 'cover',
-          display: 'block',
-          imageRendering: 'pixelated',
-        }}
-      />
-
-      {/* Hover overlay */}
-      <motion.div
-        animate={{ opacity: hovered ? 1 : 0 }}
-        transition={{ duration: 0.25 }}
-        style={{
-          position: 'absolute', inset: 0,
-          background: `linear-gradient(to top, ${item.color}ee 0%, ${item.color}88 40%, transparent 70%)`,
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'flex-end',
-          padding: '20px',
-        }}
-      >
-        <p style={{
-          fontFamily: '"Fredoka", sans-serif',
-          fontSize: '0.88rem',
-          color: '#fff',
-          lineHeight: 1.55,
-          textShadow: '0 1px 4px rgba(0,0,0,0.4)',
-        }}>
-          {item.desc}
-        </p>
-      </motion.div>
-
-      {/* Always-visible top-left badge */}
-      <div style={{
-        position: 'absolute', top: '10px', left: '10px', zIndex: 3,
-        background: item.color,
-        border: '2.5px solid #1A1A1A',
-        boxShadow: '2px 2px 0 #1A1A1A',
-        borderRadius: '7px',
-        padding: '3px 10px',
-        fontFamily: '"Press Start 2P", monospace',
-        fontSize: '7px',
-        color: '#fff',
-        letterSpacing: '0.03em',
-        lineHeight: 1.6,
-      }}>
-        {item.level}
-      </div>
-
-      {/* Floating sticker */}
-      <motion.div
-        animate={{ y: hovered ? -4 : [0, -5, 0] }}
-        transition={hovered
-          ? { duration: 0.2 }
-          : { duration: 2.8, repeat: Infinity, ease: 'easeInOut' }
-        }
-        style={{
-          position: 'absolute', top: '9px', right: '10px', zIndex: 3,
-          background: item.stickerBg,
-          border: '2px solid #1A1A1A',
-          boxShadow: '2px 2px 0 #1A1A1A',
-          borderRadius: '50%',
-          width: '32px', height: '32px',
-          display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '16px',
-        }}
-      >
-        {item.sticker}
-      </motion.div>
-
-      {/* Bottom title bar */}
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0, zIndex: 2,
-        background: `linear-gradient(to top, rgba(26,26,26,0.75) 0%, transparent 100%)`,
-        padding: '28px 14px 12px',
-        display: 'flex',
-        alignItems: 'flex-end',
-        justifyContent: 'space-between',
-      }}>
-        <span style={{
-          fontFamily: '"Fredoka", sans-serif',
-          fontWeight: 700,
-          fontSize: '1.15rem',
-          color: '#fff',
-          textShadow: '0 1px 6px rgba(0,0,0,0.5)',
-          letterSpacing: '0.02em',
-        }}>
-          {item.title}
-        </span>
-        {item.featured && (
-          <span style={{
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '6px',
-            background: item.color,
-            color: '#fff',
-            border: '1.5px solid #fff',
-            borderRadius: '4px',
-            padding: '3px 7px',
-            letterSpacing: '0.05em',
-          }}>
-            FEATURED
-          </span>
-        )}
-      </div>
-
-      {/* Featured glow ring */}
-      {item.featured && (
-        <motion.div
-          animate={{ opacity: [0.3, 0.6, 0.3] }}
-          transition={{ duration: 2.5, repeat: Infinity, ease: 'easeInOut' }}
-          style={{
-            position: 'absolute', inset: '-4px',
-            borderRadius: '18px',
-            boxShadow: `0 0 20px ${item.color}80`,
-            pointerEvents: 'none',
-            zIndex: 0,
-          }}
-        />
-      )}
-    </motion.div>
-  )
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   TRAILER PLACEHOLDER
-══════════════════════════════════════════════════════════════════ */
-function TrailerSection({ inView }) {
-  const [hovered, setHovered] = useState(false)
-
-  return (
-    <motion.div
-      {...revealUp(0.3)}
-      animate={inView ? revealUp(0.3).animate : revealUp(0.3).initial}
-    >
-      {/* Outer arcade frame */}
-      <div style={{
-        border: '4px solid #1A1A1A',
-        boxShadow: '8px 8px 0 #1A1A1A',
-        borderRadius: '20px',
-        overflow: 'hidden',
-        background: '#1A1A1A',
-      }}>
-        {/* Top arcade bar */}
-        <div style={{
-          background: '#F5EEC8',
-          borderBottom: '3px solid #1A1A1A',
-          padding: '10px 20px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            {['#FF5757','#FFE566','#3DA35D'].map(c => (
-              <div key={c} style={{
-                width: '12px', height: '12px', borderRadius: '50%',
-                background: c, border: '2px solid #1A1A1A',
-              }} />
-            ))}
-          </div>
-          <span style={{
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '8px',
-            color: '#1A1A1A',
-            letterSpacing: '0.06em',
-          }}>
-            🎬  TRAILER OFICIAL
-          </span>
-          <div style={{
-            background: '#A678CC',
-            border: '2px solid #1A1A1A',
-            borderRadius: '6px',
-            padding: '3px 10px',
-            fontFamily: '"Press Start 2P", monospace',
-            fontSize: '7px',
-            color: '#fff',
-            boxShadow: '2px 2px 0 #1A1A1A',
-          }}>
-            PRÓXIMAMENTE
-          </div>
-        </div>
-
-        {/* Screen */}
-        <div
-          onMouseEnter={() => setHovered(true)}
-          onMouseLeave={() => setHovered(false)}
-          style={{
-            aspectRatio: '16 / 9',
-            position: 'relative',
-            overflow: 'hidden',
-            background: 'linear-gradient(135deg, #1A0A2E 0%, #0A0A1A 50%, #0D1A2E 100%)',
-            cursor: 'pointer',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          {/* CRT scanlines */}
-          <div style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.18) 0px, rgba(0,0,0,0.18) 1px, transparent 1px, transparent 4px)',
-            zIndex: 3,
-          }} />
-
-          {/* Pixel grid floor (VR vibe) */}
-          <div style={{
-            position: 'absolute', inset: 0, pointerEvents: 'none',
-            backgroundImage: `
-              linear-gradient(rgba(166,120,204,0.15) 1px, transparent 1px),
-              linear-gradient(90deg, rgba(166,120,204,0.15) 1px, transparent 1px)
-            `,
-            backgroundSize: '40px 40px',
-            zIndex: 1,
-          }} />
-
-          {/* BG glow orbs */}
-          <div style={{
-            position: 'absolute', top: '20%', left: '20%',
-            width: '200px', height: '200px', borderRadius: '50%',
-            background: 'radial-gradient(circle, #A678CC44 0%, transparent 70%)',
-            filter: 'blur(30px)',
-            pointerEvents: 'none', zIndex: 1,
-          }} />
-          <div style={{
-            position: 'absolute', bottom: '15%', right: '18%',
-            width: '160px', height: '160px', borderRadius: '50%',
-            background: 'radial-gradient(circle, #FF575744 0%, transparent 70%)',
-            filter: 'blur(25px)',
-            pointerEvents: 'none', zIndex: 1,
-          }} />
-
-          {/* Center content */}
-          <div style={{ position: 'relative', zIndex: 4, textAlign: 'center' }}>
-            {/* Play button */}
-            <motion.div
-              animate={hovered
-                ? { scale: 1.12 }
-                : { scale: [1, 1.04, 1] }
-              }
-              transition={hovered
-                ? { duration: 0.2 }
-                : { duration: 2, repeat: Infinity, ease: 'easeInOut' }
-              }
-              style={{
-                width: '80px', height: '80px',
-                borderRadius: '50%',
-                background: '#A678CC',
-                border: '4px solid #fff',
-                boxShadow: `0 0 0 4px #A678CC66, 0 0 30px #A678CC88`,
-                display: 'flex', alignItems: 'center', justifyContent: 'center',
-                margin: '0 auto 20px',
-                cursor: 'pointer',
-              }}
-            >
-              {/* Pixel play triangle */}
-              <svg viewBox="0 0 24 24" width={28} height={28} aria-hidden="true">
-                <polygon points="8,5 20,12 8,19" fill="#fff" />
-              </svg>
-            </motion.div>
-
-            <p style={{
-              fontFamily: '"Press Start 2P", monospace',
-              fontSize: 'clamp(0.55rem, 1.4vw, 0.85rem)',
-              color: '#fff',
-              letterSpacing: '0.08em',
-              lineHeight: 1.8,
-              textShadow: '0 0 12px rgba(166,120,204,0.8)',
-            }}>
-              BREAK THE CYCLE
-            </p>
-            <p style={{
-              fontFamily: '"Fredoka", sans-serif',
-              fontSize: 'clamp(0.85rem, 1.8vw, 1.1rem)',
-              color: 'rgba(255,255,255,0.55)',
-              marginTop: '6px',
-              letterSpacing: '0.04em',
-            }}>
-              Trailer oficial · Próximamente
-            </p>
-
-            {/* Pixel star decorations */}
-            {[
-              { top: '-40px', left: '-60px',  color: '#FFE566', size: 14 },
-              { top: '-30px', right: '-55px', color: '#FF5757', size: 11 },
-              { bottom: '-38px', left: '-50px', color: '#3DA35D', size: 12 },
-              { bottom: '-32px', right: '-62px', color: '#A678CC', size: 14 },
-            ].map((s, i) => (
-              <motion.div
-                key={i}
-                animate={{ rotate: [0, 360] }}
-                transition={{ duration: 8 + i * 2, repeat: Infinity, ease: 'linear' }}
-                style={{ position: 'absolute', ...s }}
-                aria-hidden="true"
-              >
-                <PixelStar color={s.color} size={s.size} />
-              </motion.div>
-            ))}
-          </div>
-
-          {/* Corner pixel decorations */}
-          {[
-            { top: '12px',  left: '14px'  },
-            { top: '12px',  right: '14px' },
-            { bottom: '12px', left: '14px'  },
-            { bottom: '12px', right: '14px' },
-          ].map((pos, i) => (
-            <div key={i} style={{ position: 'absolute', ...pos, zIndex: 2 }}>
-              <svg viewBox="0 0 16 16" width={16} height={16} aria-hidden="true"
-                style={{
-                  transform: i === 1 ? 'scaleX(-1)' : i === 2 ? 'scaleY(-1)' : i === 3 ? 'scale(-1,-1)' : 'none',
-                }}>
-                <rect x="0" y="0" width="6" height="2" fill="#A678CC" opacity="0.6" />
-                <rect x="0" y="0" width="2" height="6" fill="#A678CC" opacity="0.6" />
-              </svg>
-            </div>
-          ))}
-        </div>
-
-        {/* Bottom info bar */}
-        <div style={{
-          background: '#F5EEC8',
-          borderTop: '3px solid #1A1A1A',
-          padding: '12px 22px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          flexWrap: 'wrap',
-          gap: '8px',
-        }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <span style={{ fontSize: '18px' }}>🎮</span>
-            <span style={{
-              fontFamily: '"Fredoka", sans-serif',
-              fontWeight: 600,
-              fontSize: '0.95rem',
-              color: '#1A1A1A',
-            }}>
-              Break The Cycle — UnderRise Studio
-            </span>
-          </div>
-          <div style={{ display: 'flex', gap: '8px' }}>
-            {['Runner', 'Parkour', 'VR'].map((tag, i) => (
-              <span key={tag} style={{
-                fontFamily: '"Fredoka", sans-serif',
-                fontSize: '0.78rem',
-                fontWeight: 600,
-                padding: '3px 10px',
-                borderRadius: '6px',
-                border: '2px solid #1A1A1A',
-                background: ['#FFE4E4','#DCFFE8','#EDE8FF'][i],
-                color: ['#FF5757','#3DA35D','#A678CC'][i],
-                boxShadow: '2px 2px 0 #1A1A1A',
-              }}>
-                {tag}
-              </span>
-            ))}
-          </div>
-        </div>
-      </div>
-    </motion.div>
-  )
-}
-
-/* ══════════════════════════════════════════════════════════════════
-   SECTION TITLE
+   SECTION TITLE — estreno / reveal emocional
 ══════════════════════════════════════════════════════════════════ */
 function SectionTitle({ inView }) {
+  const sparkles = [
+    { top: '2%',  left: '0%',  color: '#FFE566', size: 10, delay: 0 },
+    { top: '12%', right: '0%', color: '#A678CC', size: 9, delay: 0.7 },
+  ]
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '1rem', width: '100%' }}>
-      {/* Badge */}
-      <motion.div
-        {...revealUp(0)}
-        animate={inView ? revealUp(0).animate : revealUp(0).initial}
-        style={{
-          display: 'inline-flex', alignItems: 'center', gap: '8px',
-          background: '#FFB3C6',
-          border: '2px solid #1A1A1A',
-          boxShadow: '3px 3px 0 #1A1A1A',
-          borderRadius: '100px',
-          padding: '5px 16px',
-          fontFamily: '"Fredoka", sans-serif',
-          fontSize: '0.85rem',
-          fontWeight: 600,
-          color: '#1A1A1A',
-        }}
-      >
-        <PixelStar color="#FF5757" size={10} />
-        Gameplay &amp; Galería
-        <PixelStar color="#FF5757" size={10} />
-      </motion.div>
+    <header
+      style={{
+        position: 'relative',
+        width: '100%',
+        maxWidth: '36rem',
+        margin: '0 auto',
+        textAlign: 'center',
+      }}
+    >
+      {sparkles.map((s, i) => {
+        const { color, size, delay, ...pos } = s
+        return (
+          <motion.div
+            key={i}
+            aria-hidden="true"
+            animate={inView ? { y: [0, -4, 0], opacity: [0.5, 0.95, 0.5] } : {}}
+            transition={{ duration: 3.4, repeat: Infinity, ease: 'easeInOut', delay }}
+            style={{ position: 'absolute', pointerEvents: 'none', ...pos }}
+          >
+            <PixelStar color={color} size={size} />
+          </motion.div>
+        )
+      })}
 
-      {/* Title */}
-      <motion.h2
-        {...revealUp(0.1)}
-        animate={inView ? revealUp(0.1).animate : revealUp(0.1).initial}
+      <div style={{
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 'clamp(0.45rem, 1.2vw, 0.7rem)',
+      }}>
+        {/* Badge estreno */}
+        <motion.div
+          {...revealUp(0)}
+          animate={inView ? { ...revealUp(0).animate, scale: [1, 1.04, 1] } : revealUp(0).initial}
+          transition={{
+            ...revealUp(0).transition,
+            scale: { duration: 2.8, repeat: Infinity, ease: 'easeInOut', delay: 0.6 },
+          }}
+          style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            gap: '8px',
+            background: 'linear-gradient(175deg, #1A1A1A 0%, #2a2038 100%)',
+            border: T_BORDER,
+            boxShadow: `${T_SHADOW}, 0 0 20px rgba(166,120,204,0.2)`,
+            borderRadius: '100px',
+            padding: '5px 16px',
+          }}
+        >
+          <span
+            style={{
+              width: 6,
+              height: 6,
+              borderRadius: '50%',
+              background: '#FF5757',
+              boxShadow: '0 0 8px rgba(255,87,87,0.7)',
+            }}
+            aria-hidden="true"
+          />
+          <span style={{
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: '7px',
+            color: '#FFE566',
+            letterSpacing: '0.14em',
+          }}>
+            TRAILER OFICIAL
+          </span>
+          <PixelStar color="#A678CC" size={9} />
+        </motion.div>
+
+        {/* Título principal */}
+        <motion.div
+          {...revealUp(0.08)}
+          animate={inView ? revealUp(0.08).animate : revealUp(0.08).initial}
+          style={{ width: '100%' }}
+        >
+          <h2
+            id="trailer-heading"
+            style={{
+              fontFamily: '"Fredoka", sans-serif',
+              fontWeight: 700,
+              fontSize: 'clamp(1.75rem, 4.2vw, 2.65rem)',
+              color: '#1A1A1A',
+              lineHeight: 1.1,
+              margin: 0,
+              letterSpacing: '-0.02em',
+            }}
+          >
+            El estreno que{' '}
+            <span style={{
+              color: '#A678CC',
+              WebkitTextStroke: '1.5px #1A1A1A',
+              paintOrder: 'stroke fill',
+            }}>
+              te atrapa
+            </span>
+          </h2>
+
+          <div style={{ display: 'flex', justifyContent: 'center', marginTop: '0.4rem' }}>
+            <svg viewBox="0 0 240 14" width="min(180px, 62%)" height={12} aria-hidden="true">
+              <path
+                d="M4 9 Q38 3 72 9 Q106 14 140 9 Q174 3 236 7"
+                fill="none"
+                stroke="#A678CC"
+                strokeWidth="3.5"
+                strokeLinecap="round"
+                opacity="0.85"
+              />
+              <path
+                d="M12 11 Q50 8 88 11"
+                fill="none"
+                stroke="#FFE566"
+                strokeWidth="2"
+                strokeLinecap="round"
+                opacity="0.5"
+              />
+            </svg>
+          </div>
+        </motion.div>
+
+        {/* Subtítulo emocional */}
+        <motion.p
+          {...revealUp(0.16)}
+          animate={inView ? revealUp(0.16).animate : revealUp(0.16).initial}
+          style={{
+            fontFamily: '"Fredoka", sans-serif',
+            fontSize: 'clamp(0.95rem, 1.65vw, 1.08rem)',
+            fontWeight: 500,
+            color: 'rgba(26,26,26,0.68)',
+            lineHeight: 1.55,
+            maxWidth: '30rem',
+            margin: 0,
+            width: '100%',
+          }}
+        >
+          Descubre el viaje emocional detrás de{' '}
+          <span style={{ fontWeight: 700, color: 'rgba(26,26,26,0.85)' }}>Break The Cycle</span>.
+        </motion.p>
+      </div>
+    </header>
+  )
+}
+
+/* ══════════════════════════════════════════════════════════════════
+   TRAILER FRAME — HUD, partículas y capas cinematográficas
+══════════════════════════════════════════════════════════════════ */
+const TRAILER_HUD = ['tl', 'tr', 'bl', 'br']
+
+const TRAILER_PARTICLES = [
+  { top: '14%', left: '12%', size: 2, tone: '#fff',    delay: 0 },
+  { top: '22%', left: '78%', size: 3, tone: '#C9A8E0', delay: 0.8 },
+  { top: '38%', left: '8%',  size: 2, tone: '#FFE566', delay: 1.4 },
+  { top: '55%', left: '88%', size: 2, tone: '#fff',    delay: 0.4 },
+  { top: '68%', left: '24%', size: 3, tone: '#FF5757', delay: 1.9 },
+  { top: '78%', left: '72%', size: 2, tone: '#A678CC', delay: 1.1 },
+]
+
+function TrailerHudCorner({ corner }) {
+  const base = {
+    position: 'absolute',
+    width: 14,
+    height: 14,
+    zIndex: 6,
+    pointerEvents: 'none',
+    borderColor: 'rgba(167, 120, 204, 0.75)',
+    borderStyle: 'solid',
+  }
+  const map = {
+    tl: { top: 14, left: 14, borderWidth: '2px 0 0 2px' },
+    tr: { top: 14, right: 14, borderWidth: '2px 2px 0 0' },
+    bl: { bottom: 14, left: 14, borderWidth: '0 0 0 2px' },
+    br: { bottom: 14, right: 14, borderWidth: '0 2px 2px 0' },
+  }
+  return <span aria-hidden="true" style={{ ...base, ...map[corner] }} />
+}
+
+function TrailerScreenLayers({ active }) {
+  return (
+    <>
+      <div
+        aria-hidden="true"
         style={{
-          fontFamily: '"Fredoka", sans-serif',
-          fontWeight: 700,
-          fontSize: 'clamp(2rem, 5vw, 3.4rem)',
-          color: '#1A1A1A',
-          lineHeight: 1.1,
-          textAlign: 'center',
+          position: 'absolute',
+          inset: 0,
+          background: `
+            linear-gradient(180deg,
+              rgba(123,79,160,0.32) 0%,
+              rgba(90,55,130,0.18) 22%,
+              rgba(20,10,32,0.08) 48%,
+              rgba(15,25,45,0.14) 78%,
+              rgba(10,14,28,0.28) 100%
+            ),
+            linear-gradient(125deg,
+              rgba(166,120,204,0.2) 0%,
+              transparent 35%,
+              rgba(255,87,87,0.06) 55%,
+              rgba(123,79,160,0.16) 100%
+            ),
+            linear-gradient(90deg,
+              rgba(78,45,130,0.14) 0%,
+              rgba(30,18,48,0.04) 50%,
+              rgba(100,70,150,0.12) 100%
+            ),
+            linear-gradient(165deg, #1a0e28 0%, #120a1c 30%, #06060c 55%, #0a1424 100%)
+          `,
+        }}
+      />
+      {TRAILER_PARTICLES.map((p, i) => (
+        <motion.span
+          key={i}
+          aria-hidden="true"
+          animate={active ? { opacity: [0.15, 0.5, 0.15], y: [0, -5, 0] } : { opacity: 0.1 }}
+          transition={{ duration: 3.8 + i * 0.4, repeat: Infinity, ease: 'easeInOut', delay: p.delay }}
+          style={{
+            position: 'absolute',
+            top: p.top,
+            left: p.left,
+            width: p.size,
+            height: p.size,
+            borderRadius: '50%',
+            background: p.tone,
+            boxShadow: `0 0 6px ${p.tone}`,
+            pointerEvents: 'none',
+            zIndex: 2,
+          }}
+        />
+      ))}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          opacity: 0.35,
+          backgroundImage: `
+            linear-gradient(rgba(166,120,204,0.14) 1px, transparent 1px),
+            linear-gradient(90deg, rgba(166,120,204,0.14) 1px, transparent 1px)
+          `,
+          backgroundSize: '40px 40px',
+          pointerEvents: 'none',
+          zIndex: 1,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          backgroundImage: 'repeating-linear-gradient(0deg, rgba(0,0,0,0.12) 0px, rgba(0,0,0,0.12) 1px, transparent 1px, transparent 4px)',
+          opacity: 0.45,
+          pointerEvents: 'none',
+          zIndex: 3,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'radial-gradient(ellipse 100% 100% at 50% 50%, transparent 55%, rgba(0,0,0,0.32) 100%)',
+          pointerEvents: 'none',
+          zIndex: 3,
+        }}
+      />
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 28%)',
+          pointerEvents: 'none',
+          zIndex: 3,
+        }}
+      />
+      {TRAILER_HUD.map((c) => (
+        <TrailerHudCorner key={c} corner={c} />
+      ))}
+      {/* HUD superior */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: 14,
+          left: 36,
+          right: 36,
+          zIndex: 6,
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          pointerEvents: 'none',
         }}
       >
-        Así se{' '}
+        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
+          <motion.span
+            animate={{ opacity: [1, 0.35, 1] }}
+            transition={{ duration: 1.4, repeat: Infinity }}
+            style={{
+              width: 7,
+              height: 7,
+              borderRadius: '50%',
+              background: '#FF5757',
+              boxShadow: '0 0 8px rgba(255,87,87,0.8)',
+            }}
+          />
+          <span style={{
+            fontFamily: '"Press Start 2P", monospace',
+            fontSize: 6,
+            color: 'rgba(255,255,255,0.75)',
+            letterSpacing: '0.14em',
+          }}>
+            PREVIEW
+          </span>
+        </div>
         <span style={{
-          color: '#FF5757',
-          WebkitTextStroke: '1.5px #1A1A1A',
-          paintOrder: 'stroke fill',
+          fontFamily: '"Fredoka", sans-serif',
+          fontSize: 10,
+          fontWeight: 600,
+          color: 'rgba(255,255,255,0.45)',
+          letterSpacing: '0.2em',
         }}>
-          vive
+          16:9
         </span>
-        {' '}Break The Cycle
-      </motion.h2>
-
-      {/* Doodle underline */}
-      <motion.div
-        {...revealUp(0.15)}
-        animate={inView ? revealUp(0.15).animate : revealUp(0.15).initial}
-        style={{ display: 'flex', justifyContent: 'center' }}
+      </div>
+      {/* HUD inferior — barra de progreso decorativa */}
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          bottom: 14,
+          left: 36,
+          right: 36,
+          zIndex: 6,
+          pointerEvents: 'none',
+        }}
       >
-        <svg viewBox="0 0 260 12" width={260} height={12} aria-hidden="true">
-          <path d="M4 8 Q35 2 65 8 Q95 14 125 8 Q155 2 185 8 Q215 14 256 6"
-            fill="none" stroke="#FFB3C6" strokeWidth="3.5" strokeLinecap="round" />
+        <div style={{
+          height: 3,
+          borderRadius: 2,
+          background: 'rgba(255,255,255,0.12)',
+          overflow: 'hidden',
+        }}>
+          <motion.div
+            animate={{ scaleX: [0.12, 0.42, 0.12] }}
+            transition={{ duration: 5, repeat: Infinity, ease: 'easeInOut' }}
+            style={{
+              height: '100%',
+              width: '100%',
+              transformOrigin: 'left center',
+              background: 'linear-gradient(90deg, #A678CC, #FFE566)',
+              borderRadius: 2,
+            }}
+          />
+        </div>
+      </div>
+    </>
+  )
+}
+
+function TrailerPlaceholder({ hovered, focused }) {
+  return (
+    <div style={{
+      position: 'relative',
+      zIndex: 5,
+      height: '100%',
+      display: 'flex',
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: 24,
+      textAlign: 'center',
+    }}>
+      <motion.div
+        animate={hovered || focused ? { scale: 1.08 } : { scale: [1, 1.04, 1] }}
+        transition={hovered || focused
+          ? { duration: 0.2 }
+          : { duration: 2.4, repeat: Infinity, ease: 'easeInOut' }
+        }
+        style={{
+          width: 'clamp(88px, 14vw, 112px)',
+          height: 'clamp(88px, 14vw, 112px)',
+          borderRadius: '50%',
+          background: 'linear-gradient(155deg, #C9A0F0 0%, #7B4FA0 50%, #4E2D82 100%)',
+          border: '4px solid #fff',
+          boxShadow: '0 0 0 6px rgba(166,120,204,0.28), 0 0 48px rgba(166,120,204,0.5), 0 0 72px rgba(123,79,160,0.3)',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          marginBottom: 'clamp(14px, 2.5vw, 22px)',
+        }}
+      >
+        <svg viewBox="0 0 24 24" width={42} height={42} aria-hidden="true">
+          <polygon points="8,5 20,12 8,19" fill="#fff" />
         </svg>
       </motion.div>
-
-      {/* Subtitle */}
-      <motion.div
-        {...revealUp(0.2)}
-        animate={inView ? revealUp(0.2).animate : revealUp(0.2).initial}
-        style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
-      >
-        <p style={{
-          fontFamily: '"Fredoka", sans-serif',
-          fontSize: 'clamp(1rem, 1.8vw, 1.15rem)',
-          fontWeight: 500,
-          color: 'rgba(26,26,26,0.68)',
-          lineHeight: 1.6,
-          maxWidth: '38rem',
-          textAlign: 'center',
-          width: '100%',
-        }}>
-          Cada escenario representa emociones, decisiones y desafíos distintos.
-        </p>
-      </motion.div>
+      <p style={{
+        fontFamily: '"Press Start 2P", monospace',
+        fontSize: 'clamp(0.55rem, 1.35vw, 0.82rem)',
+        color: '#fff',
+        letterSpacing: '0.16em',
+        lineHeight: 1.9,
+        textShadow: '0 0 28px rgba(166,120,204,0.75)',
+        margin: 0,
+      }}>
+        BREAK THE CYCLE
+      </p>
+      <p style={{
+        fontFamily: '"Fredoka", sans-serif',
+        fontSize: 'clamp(1rem, 1.85vw, 1.2rem)',
+        color: 'rgba(255,255,255,0.62)',
+        marginTop: 10,
+        marginBottom: 0,
+      }}>
+        Trailer oficial · Próximamente
+      </p>
     </div>
   )
 }
 
+function TrailerPlayer({ inView }) {
+  const [hovered, setHovered] = useState(false)
+  const [focused, setFocused] = useState(false)
+  const hasEmbed = Boolean(TRAILER_EMBED_URL)
+  const screenActive = inView && (hovered || focused || hasEmbed)
+
+  return (
+    <motion.div
+      {...revealUp(0.1)}
+      animate={inView ? revealUp(0.1).animate : revealUp(0.1).initial}
+      className="relative w-full"
+      style={{ width: '100%', margin: '0 auto' }}
+    >
+      <motion.div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+        style={{ top: '6%', width: '100%', height: '88%', zIndex: 0 }}
+        animate={{ opacity: [0.4, 0.7, 0.4] }}
+        transition={{ duration: 7, repeat: Infinity, ease: 'easeInOut' }}
+      >
+        <div style={{
+          position: 'absolute',
+          inset: 0,
+          background: 'linear-gradient(180deg, rgba(166,120,204,0.28) 0%, rgba(123,79,160,0.12) 50%, transparent 100%)',
+          filter: 'blur(28px)',
+        }} />
+      </motion.div>
+
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute left-1/2 -translate-x-1/2"
+        style={{
+          bottom: '-2%',
+          width: '62%',
+          height: '10%',
+          borderRadius: '50%',
+          background: 'radial-gradient(ellipse, rgba(26,26,26,0.22) 0%, transparent 70%)',
+          filter: 'blur(12px)',
+          zIndex: 0,
+        }}
+      />
+
+      {/* Marco exterior — borde luminoso */}
+      <div
+        style={{
+          position: 'relative',
+          zIndex: 1,
+          padding: 3,
+          borderRadius: 26,
+          background: 'linear-gradient(135deg, rgba(166,120,204,0.55) 0%, rgba(255,87,87,0.2) 40%, rgba(255,229,102,0.15) 60%, rgba(166,120,204,0.45) 100%)',
+          boxShadow: [
+            T_SHADOW,
+            '0 24px 56px rgba(26,26,26,0.22)',
+            '0 48px 100px rgba(123,79,160,0.2)',
+          ].join(', '),
+        }}
+      >
+        <div style={{
+          borderRadius: 23,
+          overflow: 'hidden',
+          background: 'linear-gradient(180deg, #16141f 0%, #0a090e 100%)',
+          border: '1px solid rgba(255,255,255,0.06)',
+        }}>
+          {/* Deck superior */}
+          <div style={{
+            padding: '10px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            gap: 10,
+            flexWrap: 'wrap',
+            borderBottom: '1px solid rgba(255,255,255,0.08)',
+            background: 'linear-gradient(180deg, rgba(255,255,255,0.06) 0%, transparent 100%)',
+          }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+              {['#FF5757', '#FFE566', '#3DA35D'].map((c) => (
+                <div key={c} style={{
+                  width: 9,
+                  height: 9,
+                  borderRadius: '50%',
+                  background: c,
+                  boxShadow: `0 0 6px ${c}88`,
+                }} />
+              ))}
+              <span style={{
+                fontFamily: '"Press Start 2P", monospace',
+                fontSize: 6,
+                color: 'rgba(255,255,255,0.55)',
+                letterSpacing: '0.12em',
+              }}>
+                UNDERRISE
+              </span>
+            </div>
+            <span style={{
+              fontFamily: '"Press Start 2P", monospace',
+              fontSize: 7,
+              color: '#FFE566',
+              letterSpacing: '0.14em',
+              textShadow: '0 0 12px rgba(255,229,102,0.35)',
+            }}>
+              ▶ TRAILER OFICIAL
+            </span>
+          </div>
+
+          {/* Viewport con bezel */}
+          <div style={{
+          padding: 'clamp(10px, 1.6vw, 14px)',
+          background: '#050508',
+        }}>
+            <div
+              role={hasEmbed ? 'region' : 'button'}
+              tabIndex={hasEmbed ? undefined : 0}
+              aria-label={hasEmbed ? 'Trailer de Break The Cycle' : 'Trailer próximamente'}
+              onMouseEnter={() => setHovered(true)}
+              onMouseLeave={() => setHovered(false)}
+              onFocus={() => setFocused(true)}
+              onBlur={() => setFocused(false)}
+              onClick={() => !hasEmbed && setFocused(true)}
+              onKeyDown={(e) => {
+                if (!hasEmbed && (e.key === 'Enter' || e.key === ' ')) setFocused(true)
+              }}
+              style={{
+                position: 'relative',
+                width: '100%',
+                aspectRatio: '16 / 9',
+                maxHeight: 'min(70vh, 600px)',
+                borderRadius: 12,
+                overflow: 'hidden',
+                border: '2px solid rgba(26,26,26,0.9)',
+                boxShadow: 'inset 0 0 40px rgba(0,0,0,0.55), inset 0 2px 0 rgba(255,255,255,0.06)',
+                cursor: hasEmbed ? 'default' : 'pointer',
+              }}
+            >
+              <TrailerScreenLayers active={screenActive} />
+              {hasEmbed ? (
+                <iframe
+                  src={TRAILER_EMBED_URL}
+                  title="Trailer oficial — Break The Cycle"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{
+                    position: 'absolute',
+                    inset: 0,
+                    width: '100%',
+                    height: '100%',
+                    border: 0,
+                    zIndex: 4,
+                  }}
+                />
+              ) : (
+                <TrailerPlaceholder hovered={hovered} focused={focused} />
+              )}
+            </div>
+          </div>
+
+          {/* Deck inferior */}
+          <div style={{
+            padding: '9px 16px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            gap: 8,
+            borderTop: '1px solid rgba(255,255,255,0.08)',
+            background: 'linear-gradient(0deg, rgba(0,0,0,0.35) 0%, transparent 100%)',
+          }}>
+            <span style={{
+              fontFamily: '"Fredoka", sans-serif',
+              fontWeight: 600,
+              fontSize: '0.82rem',
+              color: 'rgba(255,255,255,0.72)',
+            }}>
+              Break The Cycle
+            </span>
+            <div style={{ display: 'flex', gap: 6, flexWrap: 'wrap' }}>
+              {['Empatía', 'Indie', 'Universitario'].map((tag) => (
+                <span key={tag} style={{
+                  fontFamily: '"Fredoka", sans-serif',
+                  fontSize: '0.68rem',
+                  fontWeight: 600,
+                  padding: '2px 8px',
+                  borderRadius: 4,
+                  border: '1px solid rgba(255,255,255,0.2)',
+                  background: 'rgba(255,255,255,0.08)',
+                  color: 'rgba(255,255,255,0.65)',
+                }}>
+                  {tag}
+                </span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  )
+}
+
 /* ══════════════════════════════════════════════════════════════════
-   MAIN EXPORT
+   MAIN EXPORT — Trailer section
 ══════════════════════════════════════════════════════════════════ */
 export default function Gallery() {
-  const { ref, inView } = useReveal(0.08)
+  const { ref, inView } = useReveal(0.1)
 
   return (
     <section
-      id="gallery"
+      id="trailer"
       ref={ref}
-      className="relative section-spacing overflow-hidden"
-      style={{ background: '#FFFBF0' }}
+      aria-labelledby="trailer-heading"
+      className="relative overflow-hidden"
+      style={{
+        paddingTop: 'clamp(3.25rem, 7vw, 5rem)',
+        paddingBottom: 'clamp(3rem, 6.5vw, 4.5rem)',
+        background: 'linear-gradient(180deg, #E9E2F6 0%, #F7F2FC 38%, #FFFBF5 100%)',
+      }}
     >
-      {/* Top border */}
-      <div style={{
-        position: 'absolute', top: 0, left: 0, right: 0, height: '4px', pointerEvents: 'none',
-        background: 'repeating-linear-gradient(90deg, #FFB3C6 0px, #FFB3C6 30px, #FFE566 30px, #FFE566 60px, #A8D4F5 60px, #A8D4F5 90px)',
-        opacity: 0.7,
-      }} />
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: 3,
+          pointerEvents: 'none',
+          background: 'linear-gradient(90deg, #A678CC 0%, #FFB3C6 50%, #FFE566 100%)',
+          opacity: 0.5,
+        }}
+      />
 
-      {/* Subtle dot bg */}
-      <div style={{
-        position: 'absolute', inset: 0, pointerEvents: 'none',
-        backgroundImage: 'radial-gradient(circle, rgba(255,179,198,0.12) 1px, transparent 1px)',
-        backgroundSize: '30px 30px',
-        maskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%)',
-        WebkitMaskImage: 'radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 100%)',
-      }} />
+      <div
+        aria-hidden="true"
+        style={{
+          position: 'absolute',
+          inset: 0,
+          pointerEvents: 'none',
+          background: 'radial-gradient(ellipse 72% 58% at 50% 48%, rgba(166,120,204,0.18) 0%, transparent 72%)',
+        }}
+      />
 
-      {/* Floating pixel stars */}
-      {[
-        { top: '6%',  left: '3%',  color: '#FF5757', size: 14, delay: 0 },
-        { top: '12%', right: '4%', color: '#FFE566', size: 11, delay: 0.7 },
-        { top: '65%', left: '2%',  color: '#A678CC', size: 12, delay: 1.3 },
-        { top: '75%', right: '2%', color: '#3DA35D', size: 14, delay: 0.4 },
-      ].map((s, i) => (
-        <motion.div
-          key={i}
-          animate={{ y: [0, -10, 0], rotate: [0, 12, 0] }}
-          transition={{ duration: 3.5 + i * 0.6, repeat: Infinity, ease: 'easeInOut', delay: s.delay }}
-          style={{ position: 'absolute', ...s, pointerEvents: 'none', zIndex: 0 }}
-          aria-hidden="true"
-        >
-          <PixelStar color={s.color} size={s.size} />
-        </motion.div>
-      ))}
-
-      <div className="container-game relative"
-        style={{ display: 'flex', flexDirection: 'column', gap: '3rem', zIndex: 1 }}>
-
-        {/* Title */}
-        <SectionTitle inView={inView} />
-
-        {/* ── Gallery grid — asymmetric layout ── */}
-        <motion.div
-          {...revealUp(0.1)}
-          animate={inView ? revealUp(0.1).animate : revealUp(0.1).initial}
-        >
-          {/* Desktop: featured left + 2 stacked right */}
-          <div className="hidden md:grid"
-            style={{
-              gridTemplateColumns: '1.55fr 1fr',
-              gridTemplateRows: '1fr 1fr',
-              gap: '16px',
-              height: '520px',
-            }}>
-            {/* Featured (Level 3) — spans both rows */}
-            <div style={{ gridRow: '1 / 3' }}>
-              <GalleryCard item={ITEMS[0]} delay={0.12} inView={inView} minHeight={520} />
-            </div>
-            {/* Level 1 */}
-            <div style={{ gridRow: '1' }}>
-              <GalleryCard item={ITEMS[1]} delay={0.22} inView={inView} minHeight={248} />
-            </div>
-            {/* Level 2 */}
-            <div style={{ gridRow: '2' }}>
-              <GalleryCard item={ITEMS[2]} delay={0.32} inView={inView} minHeight={248} />
-            </div>
-          </div>
-
-          {/* Mobile: single column */}
-          <div className="flex md:hidden flex-col gap-4">
-            {ITEMS.map((item, i) => (
-              <div key={item.id} style={{ height: '240px' }}>
-                <GalleryCard item={item} delay={0.1 + i * 0.12} inView={inView} minHeight={240} />
-              </div>
-            ))}
-          </div>
-        </motion.div>
-
-        {/* ── Gallery caption ── */}
-        <motion.div
-          {...revealUp(0.25)}
-          animate={inView ? revealUp(0.25).animate : revealUp(0.25).initial}
+      <div className="container-game relative z-[1]">
+        <div
           style={{
             display: 'flex',
+            flexDirection: 'column',
             alignItems: 'center',
-            justifyContent: 'center',
-            gap: '24px',
-            flexWrap: 'wrap',
+            width: '100%',
+            maxWidth: '64rem',
+            margin: '0 auto',
+            gap: 'clamp(1.1rem, 2.4vw, 1.65rem)',
           }}
         >
-          {[
-            { label: 'Runner · Nivel 1',       color: '#FF5757', bg: '#FFE4E4' },
-            { label: 'Parkour · Nivel 2',       color: '#3DA35D', bg: '#DCFFE8' },
-            { label: 'VR Enfrentamiento · Nivel 3', color: '#A678CC', bg: '#EDE8FF' },
-          ].map((tag) => (
-            <div key={tag.label} style={{
-              display: 'flex', alignItems: 'center', gap: '7px',
-            }}>
-              <div style={{
-                width: '10px', height: '10px', borderRadius: '2px',
-                background: tag.color,
-                border: '1.5px solid #1A1A1A',
-                flexShrink: 0,
-              }} />
-              <span style={{
-                fontFamily: '"Fredoka", sans-serif',
-                fontSize: '0.85rem',
-                fontWeight: 500,
-                color: 'rgba(26,26,26,0.65)',
-              }}>
-                {tag.label}
-              </span>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* ── Pixel divider ── */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }} aria-hidden="true">
-          <div style={{ flex: 1, height: '2px', background: 'repeating-linear-gradient(90deg, #1A1A1A 0px, #1A1A1A 6px, transparent 6px, transparent 14px)', opacity: 0.12 }} />
-          <span style={{ fontSize: '18px' }}>🎬</span>
-          <div style={{ flex: 1, height: '2px', background: 'repeating-linear-gradient(90deg, #1A1A1A 0px, #1A1A1A 6px, transparent 6px, transparent 14px)', opacity: 0.12 }} />
+          <SectionTitle inView={inView} />
+          <TrailerPlayer inView={inView} />
         </div>
-
-        {/* ── Trailer placeholder ── */}
-        <TrailerSection inView={inView} />
-
       </div>
-
-      {/* Bottom border */}
-      <div style={{
-        position: 'absolute', bottom: 0, left: 0, right: 0, height: '4px', pointerEvents: 'none',
-        background: 'repeating-linear-gradient(90deg, #A8D4F5 0px, #A8D4F5 30px, #FFB3C6 30px, #FFB3C6 60px, #FFE566 60px, #FFE566 90px)',
-        opacity: 0.7,
-      }} />
     </section>
   )
 }
