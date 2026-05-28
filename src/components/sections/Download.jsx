@@ -123,7 +123,7 @@ const DOC_PERSONALITY = {
   },
 }
 
-const GAME_DOWNLOAD_URL = 'https://drive.google.com/drive/folders/1zdccAdilvZ9PDUmkYI25daNMa3I4qrYD?usp=sharing'
+const GAME_DOWNLOAD_URL = 'https://github.com/odvelez/BreaktheCycle/releases/download/v1.0.0/BreakTheCycle.zip'
 const WEB_GAME_URL = 'https://odvelez.itch.io/break-the-cycle'
 
 /* ══════════════════════════════════════════════════════════════════

@@ -13,7 +13,7 @@ const NAV_LINKS = [
 
 const SOCIALS = [
   { icon: '🎮', label: 'Itch.io', href: 'https://odvelez.itch.io/break-the-cycle',                                  color: '#FF5757' },
-  { icon: '📁', label: 'Drive',   href: 'https://drive.google.com/drive/folders/1zdccAdilvZ9PDUmkYI25daNMa3I4qrYD?usp=sharing', color: '#FFE566' },
+  { icon: '📁', label: 'Descarga', href: 'https://github.com/odvelez/BreaktheCycle/releases/download/v1.0.0/BreakTheCycle.zip', color: '#FFE566' },
 ]
 
 /* ── Colorful title letters (ending screen style) ── */

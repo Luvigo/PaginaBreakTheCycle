@@ -24,7 +24,7 @@ const LOGO_CYCLE = [
 ]
 
 const DOWNLOAD_URL =
-  'https://drive.google.com/drive/folders/1zdccAdilvZ9PDUmkYI25daNMa3I4qrYD?usp=sharing'
+  'https://github.com/odvelez/BreaktheCycle/releases/download/v1.0.0/BreakTheCycle.zip'
 
 function NavLogo() {
   const renderLetters = (letters) =>
