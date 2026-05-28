@@ -22,3 +22,7 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local game build (do not commit)
+BreakTheCycle.zip
+public/BreakTheCycle.zip

@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { motion, useInView } from 'framer-motion'
 
 /** Cuando tengas el embed de YouTube/Vimeo, pégalo aquí */
-const TRAILER_EMBED_URL = ''
+const TRAILER_EMBED_URL = 'https://www.youtube.com/embed/7k4sQfabBdE'
 
 /* ══════════════════════════════════════════════════════════════════
    ANIMATION HELPERS
